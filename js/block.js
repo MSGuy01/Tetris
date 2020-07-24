@@ -1,4 +1,4 @@
-function Block(type) {
+function Block(type, gridData) {
 	//TYPES: 1: I-BLOCK | 2: J-BLOCK | 3: L-BLOCK | 4: O-BLOCK | 5: S-BLOCK | 6: T-BLOCK | 7: Z-BLOCK
 	var c = document.getElementById("game");
 	var ctx = c.getContext("2d");
@@ -18,19 +18,53 @@ function Block(type) {
 		3: {
 			min: 1,
 			max: 9
+		},
+		4: {
+			min: 0,
+			max: 8
+		},
+		5: {
+			min: 1,
+			max: 8
+		},
+		6: {
+			min: 1,
+			max: 8
+		},
+		7: {
+			min: 1,
+			max: 8
 		}
 	}
 
 	var iBlock = function() {
 		ctx.fillRect((game.width / 10) * j, i - 30, 30, 150);
 	}
+	var jBlock = function() {
+		ctx.fillRect((game.width / 10) * j, i - 30, 30, 90);
+		ctx.fillRect(((game.width / 10) * j) + 30, i + 30, 30, 30);
+	}
 	var lBlock = function() {
 		ctx.fillRect((game.width / 10) * j, i - 30, 30, 90);
 		ctx.fillRect(((game.width / 10) * j) - 30, i + 30, 30, 30);
 	}
-	var jBlock = function() {
-		ctx.fillRect((game.width / 10) * j, i - 30, 30, 90);
-		ctx.fillRect(((game.width / 10) * j) + 30, i + 30, 30, 30);
+	var oBlock = function() {
+		ctx.fillRect((game.width) / 10 * j, i - 30, 60, 60);
+	}
+	var sBlock = function() {
+		ctx.fillRect((game.width) / 10 * j, i - 30, 30, 60);
+		ctx.fillRect((game.width) / 10 * (j - 1), i, 30, 30);
+		ctx.fillRect((game.width) / 10 * (j + 1), i - 30, 30, 30);
+	}
+	var tBlock = function() {
+		ctx.fillRect((game.width) / 10 * j, i - 30, 30, 60);
+		ctx.fillRect((game.width) / 10 * (j - 1), i, 30, 30);
+		ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30);
+	}
+	var zBlock = function() {
+		ctx.fillRect((game.width) / 10 * j, i - 30, 30, 60);
+		ctx.fillRect((game.width) / 10 * (j - 1), i - 30, 30, 30);
+		ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30);
 	}
 	var clearBlock = function() {
 		ctx.fillStyle = 'gray';
@@ -42,6 +76,18 @@ function Block(type) {
 		}
 		else if (type == 3) {
 			lBlock();
+		}
+		else if (type == 4) {
+			oBlock();
+		}
+		else if (type == 5) {
+			sBlock();
+		}
+		else if (type == 6) {
+			tBlock();
+		}
+		else if (type == 7) {
+			zBlock();
 		}
 		ctx.stroke();
 	}
@@ -71,7 +117,6 @@ function Block(type) {
 	//I BLOCK:
 	if (type == 1) {
 		var block = window.setInterval(function() {
-			var center = game.width / 4;
 			ctx.fillStyle = 'lightblue';
 			ctx.fillRect((game.width / 10) * j, i, 30, 120);
 			ctx.stroke();
@@ -100,7 +145,6 @@ function Block(type) {
 			color = 'blue';
 		}
 		var block = window.setInterval(function() {
-			var center = game.width / 4;
 			ctx.fillStyle = color;
 			ctx.fillRect((game.width / 10) * j, i, 30, 90);
 			ctx.fillRect(((game.width / 10) * j) + (negative * 30), i + 60, 30, 30);
@@ -111,7 +155,7 @@ function Block(type) {
 			ctx.stroke();
 			i += 30;
 			if (i >= 540) {
-				new Block(Math.floor(Math.random() * 3) + 1);
+				new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
 
@@ -120,19 +164,73 @@ function Block(type) {
 
 	//O BLOCK:
 	else if (type == 4) {
-		console.log("FOUR");
+		var block = window.setInterval(function() {
+			ctx.fillStyle = 'yellow';
+			ctx.fillRect((game.width) / 10 * j, i, 60, 60);
+			ctx.stroke();
+			ctx.fillStyle = 'gray';
+			ctx.fillRect((game.width) / 10 * j, i - 60, 60, 60);
+			ctx.stroke();
+			i += 30;
+			if (i >= 570) {
+				new Block(Math.floor(Math.random() * 7) + 1);
+				window.clearInterval(block);
+			}
+		}, 200);
 	}
 
 	//S/Z BLOCKS:
 	else if (type == 5 || type == 7) {
-		console.log("FIVESEVEN");
+		var addOn;
+		var color;
+		if (type == 5) {
+			color = 'green';
+			addOn = 30;
+			addOn2 = 0;
+		}
+		else {
+			color = 'red';
+			addOn = 0;
+			addOn2 = 30;
+		}
+		var block = window.setInterval(function() {
+			ctx.fillStyle = color;
+			ctx.fillRect((game.width) / 10 * j, i, 30, 60);
+			ctx.fillRect((game.width) / 10 * (j - 1), i + addOn, 30, 30);
+			ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30 + addOn2);
+			ctx.stroke();
+			ctx.fillStyle = 'gray';
+			ctx.fillRect((game.width) / 10 * j, i - 60, 30, 60);
+			ctx.fillRect((game.width) / 10 * (j - 1), (i + addOn) - 30, 30, 30);
+			ctx.fillRect((game.width) / 10 * (j + 1), i - 30, 30, 30 + addOn2);
+			ctx.stroke();
+			i += 30;
+			if (i >= 570) {
+				new Block(Math.floor(Math.random() * 7) + 1);
+				window.clearInterval(block);
+			}
+
+		}, 200);
 	}
 
 	//T BLOCKS:
 	else if (type == 6) {
-		console.log("SIX");
-	}
-	else{
-		console.log("WHAT" + type);
+		var block = window.setInterval(function() {
+			ctx.fillStyle = 'purple';
+			ctx.fillRect((game.width) / 10 * j, i, 30, 60);
+			ctx.fillRect((game.width) / 10 * (j - 1), i + 30, 30, 30);
+			ctx.fillRect((game.width) / 10 * (j + 1), i + 30, 30, 30);
+			ctx.stroke();
+			ctx.fillStyle = 'gray';
+			ctx.fillRect((game.width) / 10 * j, i - 60, 30, 60);
+			ctx.fillRect((game.width) / 10 * (j - 1), i, 30, 30);
+			ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30);
+			ctx.stroke();
+			i += 30;
+			if (i >= 570) {
+				new Block(Math.floor(Math.random() * 7) + 1);
+				window.clearInterval(block);
+			}
+		}, 200);
 	}
 }
