@@ -7,11 +7,12 @@ function Block(type, gridData) {
 	var j = 5;
 	var dieNext = false;
 
+	console.log("NEW BLOCK: " + type);
+
 	this.gridData = gridData;
 
 	if (gridData[j][i] == 1) {
 		dieNext = true;
-		//if die next is true add a parameter to stop the game
 	}
 
 	blockData = {
@@ -25,7 +26,7 @@ function Block(type, gridData) {
 		},
 		3: {
 			min: 1,
-			max: 9
+			max: 9 
 		},
 		4: {
 			min: 0,
@@ -44,7 +45,17 @@ function Block(type, gridData) {
 			max: 8
 		}
 	}
-
+	var newBlock = function() {
+		console.log("DIE");	
+		if (dieNext) {
+			game.style.display = "none";
+			var audio = document.getElementById("theme");
+			audio.pause();
+			audio.currentTime = 0;
+			document.getElementById("lose").style.display = "block";		
+			dieNext = false;
+		}
+	}
 	var iBlock = function() {
 		ctx.fillRect((game.width / 10) * j, i - 30, 30, 150);
 	}
@@ -138,16 +149,21 @@ function Block(type, gridData) {
 				gridData[j][i + 1] = 1;
 				gridData[j][i + 2] = 1;
 				gridData[j][i + 3] = 1;
+				console.log("HIFIHIHIHI");
+				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
 				new Block(1, gridData);
 				window.clearInterval(block);
 			}
+			console.log("AAAAAAAAAAAAA");
 			if (i >= 510) {
 				i /= 30;
 				gridData[j][i] = 1;
 				gridData[j][i + 1] = 1;
 				gridData[j][i + 2] = 1;
 				gridData[j][i + 3] = 1;
+				console.log("HIFIHIHIHI");
+				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
 				new Block(1, gridData);
 				window.clearInterval(block);
