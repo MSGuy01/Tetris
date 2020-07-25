@@ -5,6 +5,14 @@ function Block(type, gridData) {
 	var l = game.width / 2;
 	var i = 0;
 	var j = 5;
+	var dieNext = false;
+
+	this.gridData = gridData;
+
+	if (gridData[j][i] == 1) {
+		dieNext = true;
+		//if die next is true add a parameter to stop the game
+	}
 
 	blockData = {
 		1: {
@@ -95,7 +103,6 @@ function Block(type, gridData) {
 	document.addEventListener("keydown", function(event) {
 	    if (event.keyCode == 37) {
 	        //LEFT
-	        console.log(j);
 	        if (i < 510 && j > blockData[type].min) {
 		        clearBlock();
 		        j--;
@@ -103,7 +110,6 @@ function Block(type, gridData) {
 	    }
 	    else if (event.keyCode == 39) {
 	        //RIGHT
-	        console.log(j);
 	        if (i < 510 && j < blockData[type].max) {
 		        clearBlock();
 		        j++;
@@ -123,9 +129,27 @@ function Block(type, gridData) {
 			ctx.fillStyle = 'gray';
 			ctx.fillRect((game.width / 10) * j, i - 30, 30, 30);
 			ctx.stroke();
-			i += 30;
+			if (gridData[j][(i/30) + 4] == 0) {
+				i += 30;
+			}
+			else{
+				i /= 30;
+				gridData[j][i] = 1;
+				gridData[j][i + 1] = 1;
+				gridData[j][i + 2] = 1;
+				gridData[j][i + 3] = 1;
+				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
+				new Block(1, gridData);
+				window.clearInterval(block);
+			}
 			if (i >= 510) {
-				new Block(Math.floor(Math.random() * 3) + 1);
+				i /= 30;
+				gridData[j][i] = 1;
+				gridData[j][i + 1] = 1;
+				gridData[j][i + 2] = 1;
+				gridData[j][i + 3] = 1;
+				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
+				new Block(1, gridData);
 				window.clearInterval(block);
 			}
 
@@ -227,6 +251,7 @@ function Block(type, gridData) {
 			ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30);
 			ctx.stroke();
 			i += 30;
+			console.log()
 			if (i >= 570) {
 				new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
