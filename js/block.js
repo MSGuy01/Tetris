@@ -52,8 +52,13 @@ function Block(type, gridData) {
 			var audio = document.getElementById("theme");
 			audio.pause();
 			audio.currentTime = 0;
+			var loseAudio = new Audio("audio/end_results.mp3");
+			loseAudio.play();
 			document.getElementById("lose").style.display = "block";		
 			dieNext = false;
+		}
+		else{
+			new Block(1, gridData);
 		}
 	}
 	var iBlock = function() {
@@ -152,7 +157,6 @@ function Block(type, gridData) {
 				console.log("HIFIHIHIHI");
 				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
-				new Block(1, gridData);
 				window.clearInterval(block);
 			}
 			console.log("AAAAAAAAAAAAA");
@@ -165,7 +169,6 @@ function Block(type, gridData) {
 				console.log("HIFIHIHIHI");
 				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
-				new Block(1, gridData);
 				window.clearInterval(block);
 			}
 

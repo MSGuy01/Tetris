@@ -17,7 +17,7 @@
 		</style>
 	</head>
 	<body>
-		<audio src="audio/tetris.mp3" id="theme"></audio>
+		<audio src="audio/theme.mp3" id="theme"></audio>
 		<h3 align="center"><button id="start">Start Game</button></h3>
 		<h1 align="center" style="display: none" id="lose">You Lose!</h1>
 		<h3 align="center"><canvas height="600" width="300" id="game"></canvas></h3>
