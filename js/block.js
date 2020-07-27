@@ -1,4 +1,4 @@
-function Block(type, gridData) {
+function Block(type, gridData, src) {
 	//TYPES: 1: I-BLOCK | 2: J-BLOCK | 3: L-BLOCK | 4: O-BLOCK | 5: S-BLOCK | 6: T-BLOCK | 7: Z-BLOCK
 	var c = document.getElementById("game");
 	var ctx = c.getContext("2d");
@@ -7,11 +7,12 @@ function Block(type, gridData) {
 	var j = 5;
 	var dieNext = false;
 
-	console.log("NEW BLOCK: " + type);
+	console.log("NEW BLOCK: " + src);
 
 	this.gridData = gridData;
 
 	if (gridData[j][i] == 1) {
+		console.log("DIENEXT");
 		dieNext = true;
 	}
 
@@ -46,19 +47,23 @@ function Block(type, gridData) {
 		}
 	}
 	var newBlock = function() {
-		console.log("DIE");	
 		if (dieNext) {
-			game.style.display = "none";
 			var audio = document.getElementById("theme");
 			audio.pause();
 			audio.currentTime = 0;
-			var loseAudio = new Audio("audio/end_results.mp3");
-			loseAudio.play();
-			document.getElementById("lose").style.display = "block";		
+			var loseSound = document.getElementById("loseAudio");
+			loseSound.play();
+			loseSound.addEventListener("ended", function() {
+				game.style.display = "none";
+				document.getElementById("lose").style.display = "block";
+				var loseAudio = new Audio("audio/end_results.mp3");
+				loseAudio.play();
+			});		
 			dieNext = false;
 		}
 		else{
-			new Block(1, gridData);
+			console.log("NEWWWWWWWWWWWWWWWW");
+			new Block(1, gridData, "newBlock");
 		}
 	}
 	var iBlock = function() {
@@ -154,19 +159,16 @@ function Block(type, gridData) {
 				gridData[j][i + 1] = 1;
 				gridData[j][i + 2] = 1;
 				gridData[j][i + 3] = 1;
-				console.log("HIFIHIHIHI");
 				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
 				window.clearInterval(block);
 			}
-			console.log("AAAAAAAAAAAAA");
 			if (i >= 510) {
 				i /= 30;
 				gridData[j][i] = 1;
 				gridData[j][i + 1] = 1;
 				gridData[j][i + 2] = 1;
 				gridData[j][i + 3] = 1;
-				console.log("HIFIHIHIHI");
 				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
 				window.clearInterval(block);
@@ -198,7 +200,7 @@ function Block(type, gridData) {
 			ctx.stroke();
 			i += 30;
 			if (i >= 540) {
-				new Block(Math.floor(Math.random() * 7) + 1);
+				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
 
@@ -216,7 +218,7 @@ function Block(type, gridData) {
 			ctx.stroke();
 			i += 30;
 			if (i >= 570) {
-				new Block(Math.floor(Math.random() * 7) + 1);
+				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
 		}, 200);
@@ -249,7 +251,7 @@ function Block(type, gridData) {
 			ctx.stroke();
 			i += 30;
 			if (i >= 570) {
-				new Block(Math.floor(Math.random() * 7) + 1);
+				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
 
@@ -272,7 +274,7 @@ function Block(type, gridData) {
 			i += 30;
 			console.log()
 			if (i >= 570) {
-				new Block(Math.floor(Math.random() * 7) + 1);
+				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
 		}, 200);
