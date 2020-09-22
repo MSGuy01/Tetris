@@ -6,10 +6,14 @@ function Block(type, gridData, src) {
 	var i = 0;
 	var j = 5;
 	var dieNext = false;
+	var blocksFilled = [];
 
 	console.log("NEW BLOCK: " + src);
-
+	console.log(gridData);
 	this.gridData = gridData;
+
+	var grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+	gridData = grid;
 
 	if (gridData[j][i] == 1) {
 		console.log("DIENEXT");
@@ -143,10 +147,15 @@ function Block(type, gridData, src) {
 
 	//I BLOCK:
 	if (type == 1) {
+		console.log("FIFIIFIIIRIIIFIIRST: ");
+		console.log(gridData);
 		var block = window.setInterval(function() {
 			ctx.fillStyle = 'lightblue';
 			ctx.fillRect((game.width / 10) * j, i, 30, 120);
 			ctx.stroke();
+			blocksFilled = [];
+			blocksFilled.push(i);
+			blocksFilled.push(i + 120);
 			ctx.fillStyle = 'gray';
 			ctx.fillRect((game.width / 10) * j, i - 30, 30, 30);
 			ctx.stroke();
@@ -154,26 +163,31 @@ function Block(type, gridData, src) {
 				i += 30;
 			}
 			else{
+				console.log("DIVIVIDE");
 				i /= 30;
-				gridData[j][i] = 1;
+				/*gridData[j][i] = 1;
 				gridData[j][i + 1] = 1;
 				gridData[j][i + 2] = 1;
-				gridData[j][i + 3] = 1;
+				gridData[j][i + 3] = 1;*/
+				for (var x = blocksFilled[0] / 30; x < blocksFilled[1] / 30; x++) {
+					//gridData[j][x] = 1;
+				}
 				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
 				window.clearInterval(block);
 			}
 			if (i >= 510) {
-				i /= 30;
-				gridData[j][i] = 1;
-				gridData[j][i + 1] = 1;
-				gridData[j][i + 2] = 1;
-				gridData[j][i + 3] = 1;
 				newBlock();
 				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
 				window.clearInterval(block);
 			}
-
+			//console.log(gridData);
+			console.log(i / 30);
+			gridData[j][i / 30] = 1;
+			if ((i/30) >= 4) {
+				//console.log((i/30));
+				gridData[j][(i/30)-1] = 0;
+			}
 		}, 200);
 	}
 
@@ -200,6 +214,7 @@ function Block(type, gridData, src) {
 			ctx.stroke();
 			i += 30;
 			if (i >= 540) {
+				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
@@ -218,6 +233,7 @@ function Block(type, gridData, src) {
 			ctx.stroke();
 			i += 30;
 			if (i >= 570) {
+				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
@@ -251,6 +267,7 @@ function Block(type, gridData, src) {
 			ctx.stroke();
 			i += 30;
 			if (i >= 570) {
+				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
@@ -274,6 +291,7 @@ function Block(type, gridData, src) {
 			i += 30;
 			console.log()
 			if (i >= 570) {
+				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
 			}
