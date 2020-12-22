@@ -1,25 +1,22 @@
 function Block(type, gridData, src) {
 	//TYPES: 1: I-BLOCK | 2: J-BLOCK | 3: L-BLOCK | 4: O-BLOCK | 5: S-BLOCK | 6: T-BLOCK | 7: Z-BLOCK
+	console.log("*******************************************************************");
 	var c = document.getElementById("game");
 	var ctx = c.getContext("2d");
 	var l = game.width / 2;
-	var i = 0;
-	var j = 5;
+	var currentRow = 0;
+	var currentColumn = 5;
 	var dieNext = false;
-	var blocksFilled = [];
-
-	console.log("NEW BLOCK: " + src);
-	console.log(gridData);
-	this.gridData = gridData;
-
-	var grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
-	gridData = grid;
-
-	if (gridData[j][i] == 1) {
-		console.log("DIENEXT");
-		dieNext = true;
+	var blocksFilled = [];	
+	var currentGridData = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+	for (var i = 0; i < gridData.length; i++) {
+		for (var j = 0; j < gridData[i].length; j++) {
+			currentGridData[i][j] = gridData[i][j];
+		}
 	}
-
+	document.getElementById("stop").addEventListener("click", function() {
+		window.clearInterval(block);
+	});
 	blockData = {
 		1: {
 			min: 0,
@@ -50,54 +47,34 @@ function Block(type, gridData, src) {
 			max: 8
 		}
 	}
-	var newBlock = function() {
-		if (dieNext) {
-			var audio = document.getElementById("theme");
-			audio.pause();
-			audio.currentTime = 0;
-			var loseSound = document.getElementById("loseAudio");
-			loseSound.play();
-			loseSound.addEventListener("ended", function() {
-				game.style.display = "none";
-				document.getElementById("lose").style.display = "block";
-				var loseAudio = new Audio("audio/end_results.mp3");
-				loseAudio.play();
-			});		
-			dieNext = false;
-		}
-		else{
-			console.log("NEWWWWWWWWWWWWWWWW");
-			new Block(1, gridData, "newBlock");
-		}
-	}
 	var iBlock = function() {
-		ctx.fillRect((game.width / 10) * j, i - 30, 30, 150);
+		ctx.fillRect((game.width / 10) * currentColumn, currentRow- 30, 30, 150);
 	}
 	var jBlock = function() {
-		ctx.fillRect((game.width / 10) * j, i - 30, 30, 90);
-		ctx.fillRect(((game.width / 10) * j) + 30, i + 30, 30, 30);
+		ctx.fillRect((game.width / 10) * currentColumn, currentRow- 30, 30, 90);
+		ctx.fillRect(((game.width / 10) * currentColumn) + 30, currentRow+ 30, 30, 30);
 	}
 	var lBlock = function() {
-		ctx.fillRect((game.width / 10) * j, i - 30, 30, 90);
-		ctx.fillRect(((game.width / 10) * j) - 30, i + 30, 30, 30);
+		ctx.fillRect((game.width / 10) * currentColumn, currentRow- 30, 30, 90);
+		ctx.fillRect(((game.width / 10) * currentColumn) - 30, currentRow+ 30, 30, 30);
 	}
 	var oBlock = function() {
-		ctx.fillRect((game.width) / 10 * j, i - 30, 60, 60);
+		ctx.fillRect((game.width) / 10 * currentColumn, currentRow- 30, 60, 60);
 	}
 	var sBlock = function() {
-		ctx.fillRect((game.width) / 10 * j, i - 30, 30, 60);
-		ctx.fillRect((game.width) / 10 * (j - 1), i, 30, 30);
-		ctx.fillRect((game.width) / 10 * (j + 1), i - 30, 30, 30);
+		ctx.fillRect((game.width) / 10 * currentColumn, currentRow- 30, 30, 60);
+		ctx.fillRect((game.width) / 10 * (currentColumn - 1), i, 30, 30);
+		ctx.fillRect((game.width) / 10 * (currentColumn + 1), currentRow- 30, 30, 30);
 	}
 	var tBlock = function() {
-		ctx.fillRect((game.width) / 10 * j, i - 30, 30, 60);
-		ctx.fillRect((game.width) / 10 * (j - 1), i, 30, 30);
-		ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30);
+		ctx.fillRect((game.width) / 10 * currentColumn, currentRow- 30, 30, 60);
+		ctx.fillRect((game.width) / 10 * (currentColumn - 1), i, 30, 30);
+		ctx.fillRect((game.width) / 10 * (currentColumn + 1), i, 30, 30);
 	}
 	var zBlock = function() {
-		ctx.fillRect((game.width) / 10 * j, i - 30, 30, 60);
-		ctx.fillRect((game.width) / 10 * (j - 1), i - 30, 30, 30);
-		ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30);
+		ctx.fillRect((game.width) / 10 * currentColumn, currentRow- 30, 30, 60);
+		ctx.fillRect((game.width) / 10 * (currentColumn - 1), currentRow- 30, 30, 30);
+		ctx.fillRect((game.width) / 10 * (currentColumn + 1), i, 30, 30);
 	}
 	var clearBlock = function() {
 		ctx.fillStyle = 'gray';
@@ -128,65 +105,82 @@ function Block(type, gridData, src) {
 	document.addEventListener("keydown", function(event) {
 	    if (event.keyCode == 37) {
 	        //LEFT
-	        if (i < 510 && j > blockData[type].min) {
+	        if (currentRow< 510 && currentColumn > blockData[type].min) {
 		        clearBlock();
-		        j--;
+		        currentColumn--;
 		    }
 	    }
 	    else if (event.keyCode == 39) {
 	        //RIGHT
-	        if (i < 510 && j < blockData[type].max) {
+	        if (currentRow< 510 && currentColumn < blockData[type].max) {
 		        clearBlock();
-		        j++;
+		        currentColumn++;
 		    }
 	    }
 	    else if (event.keyCode == 82) {
 	    	//R (ROTATE)
 	    }
 	});
-
+	var newBlock = function(thiscurrentColumn, thisBlocksFilled) {
+		if (dieNext) {
+			var audio = document.getElementById("theme");
+			audio.pause();
+			audio.currentTime = 0;
+			var loseSound = document.getElementById("loseAudio");
+			loseSound.play();
+			loseSound.addEventListener("ended", function() {
+				game.style.display = "none";
+				document.getElementById("lose").style.display = "block";
+				var loseAudio = new Audio("audio/end_results.mp3");
+				loseAudio.play();
+			});		
+			dieNext = false;
+		}
+		else{
+			//DIVIDE THIS BLOCKS FILLED AND ADD TO GRID DATA
+			new Block(1, currentGridData, "newBlock");
+		}
+	}
+	var clearBelow = function() {
+		if (currentGridData[currentColumn][(currentRow/ 30) + 5] == 1) {
+			return false;
+		}
+		return true;
+	}
 	//I BLOCK:
 	if (type == 1) {
-		console.log("FIFIIFIIIRIIIFIIRST: ");
-		console.log(gridData);
 		var block = window.setInterval(function() {
 			ctx.fillStyle = 'lightblue';
-			ctx.fillRect((game.width / 10) * j, i, 30, 120);
+			ctx.fillRect((game.width / 10) * currentColumn, currentRow, 30, 120);
 			ctx.stroke();
-			blocksFilled = [];
-			blocksFilled.push(i);
-			blocksFilled.push(i + 120);
 			ctx.fillStyle = 'gray';
-			ctx.fillRect((game.width / 10) * j, i - 30, 30, 30);
+			ctx.fillRect((game.width / 10) * currentColumn, currentRow - 30, 30, 30);
 			ctx.stroke();
-			if (gridData[j][(i/30) + 4] == 0) {
-				i += 30;
+			for (var k = currentRow/30; k < (currentRow/30)+4; k++) {
+				currentGridData[currentColumn][k] = 1;
+				console.log(currentGridData[currentColumn][k]);
+			}
+			console.log("CURRENT GRID DATA");
+			console.log(currentGridData);
+			console.log(currentGridData[currentColumn]);
+			if (clearBelow()) {
+				currentRow += 30;
 			}
 			else{
-				console.log("DIVIVIDE");
-				i /= 30;
-				/*gridData[j][i] = 1;
-				gridData[j][i + 1] = 1;
-				gridData[j][i + 2] = 1;
-				gridData[j][i + 3] = 1;*/
-				for (var x = blocksFilled[0] / 30; x < blocksFilled[1] / 30; x++) {
-					//gridData[j][x] = 1;
-				}
-				newBlock();
-				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
+				//TODO:SEEMS TO SAVE ONLY THE ROW FOR SOME ANNOYING REASON
+				console.log("CURRENT GRID DATA");
+				console.log(currentGridData[currentColumn]);
+				newBlock(currentColumn, blocksFilled)
 				window.clearInterval(block);
 			}
-			if (i >= 510) {
-				newBlock();
-				//new Block(Math.floor(Math.random() * 3) + 1, gridData);
+			if (currentRow >= 510) {
+				console.log("CURRENT GRID DATA");
+				console.log(currentGridData);
+				newBlock(currentColumn, blocksFilled)
 				window.clearInterval(block);
 			}
-			//console.log(gridData);
-			console.log(i / 30);
-			gridData[j][i / 30] = 1;
-			if ((i/30) >= 4) {
-				//console.log((i/30));
-				gridData[j][(i/30)-1] = 0;
+			for (var i = 0; i < gridData[currentColumn].length; i++) {
+				currentGridData[currentColumn][i] = gridData[currentColumn][i];
 			}
 		}, 200);
 	}
@@ -205,15 +199,15 @@ function Block(type, gridData, src) {
 		}
 		var block = window.setInterval(function() {
 			ctx.fillStyle = color;
-			ctx.fillRect((game.width / 10) * j, i, 30, 90);
-			ctx.fillRect(((game.width / 10) * j) + (negative * 30), i + 60, 30, 30);
+			ctx.fillRect((game.width / 10) * currentColumn, i, 30, 90);
+			ctx.fillRect(((game.width / 10) * currentColumn) + (negative * 30), currentRow + 60, 30, 30);
 			ctx.stroke();
 			ctx.fillStyle = 'gray';
-			ctx.fillRect((game.width / 10) * j, i - 30, 30, 30);
-			ctx.fillRect(((game.width / 10) * j) + (negative * 30), i + 30, 30, 30);
+			ctx.fillRect((game.width / 10) * currentColumn, currentRow- 30, 30, 30);
+			ctx.fillRect(((game.width / 10) * currentColumn) + (negative * 30), currentRow+ 30, 30, 30);
 			ctx.stroke();
-			i += 30;
-			if (i >= 540) {
+			currentRow+= 30;
+			if (currentRow>= 540) {
 				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
@@ -226,13 +220,13 @@ function Block(type, gridData, src) {
 	else if (type == 4) {
 		var block = window.setInterval(function() {
 			ctx.fillStyle = 'yellow';
-			ctx.fillRect((game.width) / 10 * j, i, 60, 60);
+			ctx.fillRect((game.width) / 10 * currentColumn, i, 60, 60);
 			ctx.stroke();
 			ctx.fillStyle = 'gray';
-			ctx.fillRect((game.width) / 10 * j, i - 60, 60, 60);
+			ctx.fillRect((game.width) / 10 * currentColumn, currentRow- 60, 60, 60);
 			ctx.stroke();
-			i += 30;
-			if (i >= 570) {
+			currentRow+= 30;
+			if (currentRow>= 570) {
 				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
@@ -256,17 +250,17 @@ function Block(type, gridData, src) {
 		}
 		var block = window.setInterval(function() {
 			ctx.fillStyle = color;
-			ctx.fillRect((game.width) / 10 * j, i, 30, 60);
-			ctx.fillRect((game.width) / 10 * (j - 1), i + addOn, 30, 30);
-			ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30 + addOn2);
+			ctx.fillRect((game.width) / 10 * currentColumn, i, 30, 60);
+			ctx.fillRect((game.width) / 10 * (currentColumn - 1), currentRow+ addOn, 30, 30);
+			ctx.fillRect((game.width) / 10 * (currentColumn + 1), i, 30, 30 + addOn2);
 			ctx.stroke();
 			ctx.fillStyle = 'gray';
-			ctx.fillRect((game.width) / 10 * j, i - 60, 30, 60);
-			ctx.fillRect((game.width) / 10 * (j - 1), (i + addOn) - 30, 30, 30);
-			ctx.fillRect((game.width) / 10 * (j + 1), i - 30, 30, 30 + addOn2);
+			ctx.fillRect((game.width) / 10 * currentColumn, currentRow- 60, 30, 60);
+			ctx.fillRect((game.width) / 10 * (currentColumn - 1), (currentRow+ addOn) - 30, 30, 30);
+			ctx.fillRect((game.width) / 10 * (currentColumn + 1), currentRow- 30, 30, 30 + addOn2);
 			ctx.stroke();
-			i += 30;
-			if (i >= 570) {
+			currentRow+= 30;
+			if (currentRow>= 570) {
 				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);
@@ -279,18 +273,17 @@ function Block(type, gridData, src) {
 	else if (type == 6) {
 		var block = window.setInterval(function() {
 			ctx.fillStyle = 'purple';
-			ctx.fillRect((game.width) / 10 * j, i, 30, 60);
-			ctx.fillRect((game.width) / 10 * (j - 1), i + 30, 30, 30);
-			ctx.fillRect((game.width) / 10 * (j + 1), i + 30, 30, 30);
+			ctx.fillRect((game.width) / 10 * currentColumn, i, 30, 60);
+			ctx.fillRect((game.width) / 10 * (currentColumn - 1), currentRow+ 30, 30, 30);
+			ctx.fillRect((game.width) / 10 * (currentColumn + 1), currentRow+ 30, 30, 30);
 			ctx.stroke();
 			ctx.fillStyle = 'gray';
-			ctx.fillRect((game.width) / 10 * j, i - 60, 30, 60);
-			ctx.fillRect((game.width) / 10 * (j - 1), i, 30, 30);
-			ctx.fillRect((game.width) / 10 * (j + 1), i, 30, 30);
+			ctx.fillRect((game.width) / 10 * currentColumn, currentRow- 60, 30, 60);
+			ctx.fillRect((game.width) / 10 * (currentColumn - 1), i, 30, 30);
+			ctx.fillRect((game.width) / 10 * (currentColumn + 1), i, 30, 30);
 			ctx.stroke();
-			i += 30;
-			console.log()
-			if (i >= 570) {
+			currentRow+= 30;
+			if (currentRow>= 570) {
 				newBlock();
 				//new Block(Math.floor(Math.random() * 7) + 1);
 				window.clearInterval(block);

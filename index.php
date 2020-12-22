@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html> 
 	<head>
 		<title>Tetris</title>
 	 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -23,6 +23,7 @@
 		<audio src="audio/theme.mp3" id="theme"></audio>
 		<audio src="audio/lose.mp3" id="loseAudio"></audio>
 		<h3 align="center"><button id="start">Start Game</button></h3>
+		<h3 align="center"><button style="display: none" id="stop">STOP</button></h3>
 		<h1 align="center" style="display: none" id="lose">You Lose!</h1>
 		<h3 align="center"><canvas height="600" width="300" id="game"></canvas></h3>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -30,6 +31,7 @@
 		<script src="js/block.js"></script>
 		<script>
 			start.addEventListener("click", function() {
+				document.getElementById("stop").style.display = "block";
 				start.style.display = "none";
 				var audio = document.getElementById("theme");
 				audio.addEventListener("ended", function() {
@@ -38,11 +40,11 @@
 				}, false);
 				audio.play();
 				let tetrisGrid = new Grid(false);
+				//EACH GROUP IS A COLUMN
 				var grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
 				//groups are columns, individual 0's are rows
-				console.log(grid);
 				//new Block(Math.floor(Math.random() * 7) + 1, grid);
-				new Block(2, grid, "index");
+				new Block(1, grid, "index");
 			});
 		</script>
 	</body>
