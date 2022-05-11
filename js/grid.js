@@ -2,6 +2,8 @@
 function Grid(red) {
 	var c = document.getElementById("game");
 	var ctx = c.getContext("2d");
+	ctx.fillStyle = 'gray';
+	ctx.fillRect(0,0,game.width,game.height);
 	var l = game.width / 2;
 	for (var i = 0; i < game.width; i += game.width / 10) {
 		//gridPositions.push([]);
