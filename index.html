@@ -22,24 +22,25 @@
 	<body>
 		<audio src="audio/theme.mp3" id="theme"></audio>
 		<audio src="audio/lose.mp3" id="loseAudio"></audio>
+		<h3 align="center"><img id="logo" src="logo.png"></h3>
 		<h3 align="center"><button id="start">Start Game</button></h3>
-		<h3 align="center"><button style="display: none" id="stop">STOP</button></h3>
 		<h1 align="center" style="display: none" id="lose">You Lose!</h1>
-		<h3 align="center"><canvas height="600" width="300" id="game"></canvas></h3>
+		<h3 align="center" id="score" style="display:none;">Score: 0</h3>
+		<h3 align="center" id="gameContainer" style="display:none"><canvas height="600" width="300" id="game"></canvas></h3>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-		<script src="js/grid.js"></script>
 		<script src="js/block.js"></script>
 		<script>
-			start.addEventListener("click", function() {
-				document.getElementById("stop").style.display = "block";
-				start.style.display = "none";
+			$('#start').on("click", function() {
+				$('#gameContainer').css('display','block');
+				$('#logo').css('display','none');
+				$('#start').css('display','none');
+				$('#score').css('display','block');
 				var audio = document.getElementById("theme");
 				audio.addEventListener("ended", function() {
 				    this.currentTime = 0;
 				    this.play();
 				}, false);
 				audio.play();
-				let tetrisGrid = new Grid(false);
 			});
 		</script>
 	</body>

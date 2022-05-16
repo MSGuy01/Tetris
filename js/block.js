@@ -1,25 +1,82 @@
-var c = document.getElementById("game");
-var ctx = c.getContext("2d");
-var bl = 30;
+var score = 0;
 class Block {
 	constructor(y,x) {
-		this.fill = function() {
-			Grid();
-			ctx.fillStyle = this.color;
+		this.checkLine = function() {
+			let arr = [];
 			for (let i = 0; i < this.coords[0].length; i++) {
+				arr.push(this.coords[0][i]);
+			}
+			let sortedArr = arr.sort();
+			let t = 0;
+			let c = sortedArr[0];
+			for (let i = 0; i < sortedArr.length; i++) {
+				if (sortedArr[i] == c) {
+					t++;
+				}
+				else {
+					c = sortedArr[i];
+					t = 0;
+				}
+				if (t == 10) {
+					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
+						placedBlocks.coords[0][i] += 30;
+					}
+					score += 1000;
+					$('#score').html('Score: ' + score);
+				}
+			}
+		}
+		this.fill = function() {
+			if (this.colors == null) {
+				ctx.fillStyle = this.color;
+			}
+			for (let i = 0; i < this.coords[0].length; i++) {
+				if (this.colors != null) {
+					ctx.fillStyle = this.colors[i];
+				}
 				ctx.fillRect(this.coords[1][i],this.coords[0][i],30,30);
 			}
 		}
 		this.fall = function() {
-			for (let i = 0; i < this.coords[0].length; i++) {
-				this.coords[0][i] += 30;
+			if (this.coords[0][this.coords[0].length-1] <= 540 && ! placedBlocks.coords[0].includes(currentBlock.coords[0][currentBlock.coords[0].length-1]+30)) {
+				if (1 == 1) {
+					for (let i = 0; i < this.coords[0].length; i++) {
+						this.coords[0][i] += 30;
+					}
+				}
+			}
+			else {
+				let placed = false;
+				for (let j = 0; j < this.coords[0].length; j++) {
+					for (let i = 0; i < placedBlocks.coords[0].length;i++) {
+						if (placedBlocks.coords[0][i] < this.coords[0][this.coords[0].length]) {
+							placed = true;
+							placedBlocks.coords[0].splice(i-1,0,this.coords[0][j]);
+							placedBlocks.coords[1].splice(i-1,0,this.coords[1][j]);
+						}
+					}
+				}
+				if (!placed) {
+					placed = true;
+					for (let j = 0; j < this.coords[0].length; j++) {
+						placedBlocks.coords[0].push(this.coords[0][j]);
+						placedBlocks.coords[1].push(this.coords[1][j]);
+						placedBlocks.colors.push(this.color);
+					}
+				}
+				//console.log(placedBlocks);
+				placedBlocks.fill();
+				placedBlocks.checkLine();
+				newBlock = true;
 			}
 			this.fill();
 		}
 		this.move = function(xChange,yChange) {
-			for (let i = 0; i < this.coords[0].length; i++) {
-				this.coords[1][i] += xChange;
-				this.coords[0][i] += yChange;
+			if (this.coords[0][this.coords[0].length-1] <= 540) {
+				for (let i = 0; i < this.coords[0].length; i++) {
+					this.coords[1][i] += xChange;
+					this.coords[0][i] += yChange;
+				}
 			}
 			this.fill();
 		}
@@ -28,26 +85,208 @@ class Block {
 class IBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
-		this.color = 'blue';
-		this.coords = [[y,y+30,y+60,y+90],[x,x,x,x]];
+		this.color = 'aqua';
+		this.coords = [[y,y,y,y],[x,x+30,x+60,x+90]];
 	}
 }
-var i;
+class TBlock extends Block{
+	constructor(y,x) {
+		super(y,x);
+		this.color = 'purple';
+		this.coords = [[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]];
+	}
+}
+class LBlock extends Block{
+	constructor(y,x) {
+		super(y,x);
+		this.color = 'orange';
+		this.coords = [[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]];
+	}
+}
+class JBlock extends Block{
+	constructor(y,x) {
+		super(y,x);
+		this.color = 'blue';
+		this.coords = [[y,y+30,y+30,y+30],[x,x,x+30,x+60]];
+	}
+}
+class OBlock extends Block{
+	constructor(y,x) {
+		super(y,x);
+		this.color = 'yellow';
+		this.coords = [[y,y,y+30,y+30],[x,x+30,x,x+30]];
+	}
+}
+class SBlock extends Block{
+	constructor(y,x) {
+		super(y,x);
+		this.color = 'green';
+		this.coords = [[y,y,y+30,y+30],[x+30,x+60,x,x+30]];
+	}
+}
+class ZBlock extends Block{
+	constructor(y,x) {
+		super(y,x);
+		this.color = 'red';
+		this.coords = [[y,y,y+30,y+30],[x,x+30,x+30,x+60]];
+	}
+}
+const numBlocks = 7;
+var c = document.getElementById("game");
+var ctx = c.getContext("2d");
+var newBlock = false;
+var newGroup = function() {
+	let arr = [];
+	let used = [];
+	for (let i = 0; i < numBlocks; i++) {
+		let move = false;
+		let choice;
+		while (!move){
+			choice = Math.floor(Math.random() * numBlocks);
+			if (!used.includes(choice)) {
+				move = true;
+			}
+		}
+		used.push(choice);
+		switch (choice) {
+			case 0:
+				arr.push(new IBlock(0,90));
+				break;
+			case 1:
+				arr.push(new LBlock(0,90));
+				break;
+			case 2:
+				arr.push(new JBlock(0,90));
+				break;
+			case 3:
+				arr.push(new OBlock(0,120));
+				break;
+			case 4:
+				arr.push(new SBlock(0,90));
+				break;
+			case 5:
+				arr.push(new TBlock(0,90));
+				break;
+			case 6:
+				arr.push(new ZBlock(0,90));
+				break;
+		}
+	}
+	return arr;
+}
+var placedBlocks = new Block;
+var group;
+placedBlocks.coords = [
+	[],
+	[]
+]
+placedBlocks.colors = [];
+var currentBlock;
+var time = 0;
+var move = true;
+var groupIndex = 0;
+window.setInterval(() => {
+	move = true;
+	if (newBlock) {
+		groupIndex++;
+		if (groupIndex == numBlocks) {
+			groupIndex = 0;
+			group = newGroup();
+			console.log(currentBlock);
+		}
+		currentBlock = group[groupIndex];
+		newBlock = false;
+	}
+}, 500);
+//up,down,left,right
+var keysDown = [false,false,false,false];
 $('#start').on('click', () => {
-	i = new IBlock(1,1);
-	i.fill();
+	group = newGroup();
+	currentBlock = group[groupIndex];
+	console.log(currentBlock);
+	setImage();
 });
 document.body.addEventListener("keydown", e => {
 	if (e.key == "ArrowRight") {
-		i.move(30,0);
+		let a = copyArr(currentBlock.coords[1]).sort();
+		if (a[a.length-1]<270) {
+			currentBlock.move(30,0);
+		}
 	}
 	if (e.key == "ArrowLeft") {
-		i.move(-30,0);
-	}
-	if (e.key == "ArrowUp") {
-		i.move(0,-30);
+		currentBlock.move(-30,0);
 	}
 	if (e.key == "ArrowDown") {
-		i.move(0,30);
+		currentBlock.move(0,30);
+	}
+	if (e.key == " ") { 
+		//570
+		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
+			if (placedBlocks.coords[0].includes(currentBlock.coords[0][currentBlock.coords[0].length-1]+30)) {
+				let stop = false;
+				for (let i = 0; i < currentBlock.coords[0].length; i++) {
+					if (currentBlock.coords[0][i] == currentBlock.coords[0][currentBlock.coords[0].length-1]) {
+						let iO = placedBlocks.coords[1].indexOf(currentBlock.coords[1][i]);
+						if (iO != -1 && placedBlocks.coords[0][iO] == currentBlock.coords[0][i]) {
+							stop = true;
+						}
+					}
+				}
+				if (stop) {
+					break;
+				}
+			}
+			for (let i = 0; i < currentBlock.coords[0].length; i++) {
+				currentBlock.coords[0][i] += 30;
+			}
+		}
 	}
 })
+function background() {
+	let img = new Image();
+	img.src = 'grid.png';
+	img.onload = () => {
+	  ctx.drawImage(img,0,0,300,600);
+	}
+}
+function render(c){
+	//c.clearRect(0,0,600,600)
+	background();
+	placedBlocks.fill();
+}
+var then = 0;
+function setImage(){
+	var canvas = document.getElementById("game");
+	var ctx = canvas.getContext("2d");
+	var now = Date.now();
+	var delta = now-then;
+	render(ctx);
+	update(delta/1000);
+  
+	then = now;
+  
+	requestAnimationFrame(setImage);
+}
+addEventListener("keydown", e => {
+	
+})
+function update(modifier) {
+	if (move) {
+		currentBlock.fall();
+		move = false;
+	}
+	else {
+		currentBlock.fill();
+	}
+	for (let i = 0; i < placedBlocks.length; i++) {
+		placedBlocks[i].fill();
+	}
+}
+
+function copyArr(arr) {
+	let f = [];
+	for (let i = 0; i < arr.length; i++) {
+		f.push(arr[i]);
+	}
+	return f;
+}
