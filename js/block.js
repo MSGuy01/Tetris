@@ -18,9 +18,6 @@ class Block {
 					t = 0;
 				}
 				if (t == 10) {
-					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
-						placedBlocks.coords[0][i] += 30;
-					}
 					score += 1000;
 					$('#score').html('Score: ' + score);
 				}
@@ -38,7 +35,43 @@ class Block {
 			}
 		}
 		this.fall = function() {
-			if (this.coords[0][this.coords[0].length-1] <= 540 && ! placedBlocks.coords[0].includes(currentBlock.coords[0][currentBlock.coords[0].length-1]+30)) {
+			let stop = false;
+			if (placedBlocks.coords[0].includes(currentBlock.coords[0][currentBlock.coords[0].length-1]+30)) {
+				let arr1 = [];
+				let arr2 = [];
+				//Goes through all x values of current block and adds their lowest y value to arr1
+				for (let i = 0; i < currentBlock.coords[1].length; i++) {
+					let insert = true;
+					for (let j = 0; j < arr1.length; j++) {
+						if (arr1[j][0] == currentBlock.coords[1][i] && currentBlock.coords[1][i] > arr1[j][1]) {
+							arr1[j][1] = currentBlock.coords[1][i];
+						}
+					}
+					if (insert) {
+						arr1.push([currentBlock.coords[1][i],currentBlock.coords[0][i]]);
+					}
+				}
+				//Goes through all x values of placed blocks and adds their highest y value to arr1
+				for (let i = 0; i < placedBlocks.coords[0].length; i++) {
+					let insert = true;
+					for (let j = 0; j < arr2.length; j++) {
+						if (arr2[j][0] == placedBlocks.coords[1][i] && placedBlocks.coords[1][i] < arr2[j][1]) {
+							arr2[j][1] = placedBlocks.coords[1][i];
+						}
+					}
+					if (insert) {
+						arr2.push([placedBlocks.coords[1][i],placedBlocks.coords[0][i]]);
+					}
+				}
+				for (let i in arr2) {
+					for (let j in arr1) {
+						if (arr1[j][0] == arr2[i][0] && (arr1[j][1] + 30) == arr2[i][1]) {
+							stop = true;
+						}
+					}
+				}
+			}
+			if (this.coords[0][this.coords[0].length-1] <= 540 && ! stop) {
 				if (1 == 1) {
 					for (let i = 0; i < this.coords[0].length; i++) {
 						this.coords[0][i] += 30;
@@ -72,7 +105,45 @@ class Block {
 			this.fill();
 		}
 		this.move = function(xChange,yChange) {
-			if (this.coords[0][this.coords[0].length-1] <= 540) {
+			let stop = false;
+			if (yChange != 0) {
+				if (placedBlocks.coords[0].includes(currentBlock.coords[0][currentBlock.coords[0].length-1]+30)) {
+					let arr1 = [];
+					let arr2 = [];
+					//Goes through all x values of current block and adds their lowest y value to arr1
+					for (let i = 0; i < currentBlock.coords[1].length; i++) {
+						let insert = true;
+						for (let j = 0; j < arr1.length; j++) {
+							if (arr1[j][0] == currentBlock.coords[1][i] && currentBlock.coords[1][i] > arr1[j][1]) {
+								arr1[j][1] = currentBlock.coords[1][i];
+							}
+						}
+						if (insert) {
+							arr1.push([currentBlock.coords[1][i],currentBlock.coords[0][i]]);
+						}
+					}
+					//Goes through all x values of placed blocks and adds their highest y value to arr1
+					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
+						let insert = true;
+						for (let j = 0; j < arr2.length; j++) {
+							if (arr2[j][0] == placedBlocks.coords[1][i] && placedBlocks.coords[1][i] < arr2[j][1]) {
+								arr2[j][1] = placedBlocks.coords[1][i];
+							}
+						}
+						if (insert) {
+							arr2.push([placedBlocks.coords[1][i],placedBlocks.coords[0][i]]);
+						}
+					}
+					for (let i in arr2) {
+						for (let j in arr1) {
+							if (arr1[j][0] == arr2[i][0] && (arr1[j][1] + 30) == arr2[i][1]) {
+								stop = true;
+							}
+						}
+					}
+				}
+			}
+			if (this.coords[0][this.coords[0].length-1] <= 540 && ! stop) {
 				for (let i = 0; i < this.coords[0].length; i++) {
 					this.coords[1][i] += xChange;
 					this.coords[0][i] += yChange;
@@ -214,7 +285,10 @@ document.body.addEventListener("keydown", e => {
 		}
 	}
 	if (e.key == "ArrowLeft") {
-		currentBlock.move(-30,0);
+		let a = copyArr(currentBlock.coords[1]).sort();
+		if (a[0]>0) {
+			currentBlock.move(-30,0);
+		}
 	}
 	if (e.key == "ArrowDown") {
 		currentBlock.move(0,30);
@@ -224,10 +298,35 @@ document.body.addEventListener("keydown", e => {
 		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
 			if (placedBlocks.coords[0].includes(currentBlock.coords[0][currentBlock.coords[0].length-1]+30)) {
 				let stop = false;
-				for (let i = 0; i < currentBlock.coords[0].length; i++) {
-					if (currentBlock.coords[0][i] == currentBlock.coords[0][currentBlock.coords[0].length-1]) {
-						let iO = placedBlocks.coords[1].indexOf(currentBlock.coords[1][i]);
-						if (iO != -1 && placedBlocks.coords[0][iO] == currentBlock.coords[0][i]) {
+				let arr1 = [];
+				let arr2 = [];
+				//Goes through all x values of current block and adds their lowest y value to arr1
+				for (let i = 0; i < currentBlock.coords[1].length; i++) {
+					let insert = true;
+					for (let j = 0; j < arr1.length; j++) {
+						if (arr1[j][0] == currentBlock.coords[1][i] && currentBlock.coords[1][i] > arr1[j][1]) {
+							arr1[j][1] = currentBlock.coords[1][i];
+						}
+					}
+					if (insert) {
+						arr1.push([currentBlock.coords[1][i],currentBlock.coords[0][i]]);
+					}
+				}
+				//Goes through all x values of placed blocks and adds their highest y value to arr1
+				for (let i = 0; i < placedBlocks.coords[0].length; i++) {
+					let insert = true;
+					for (let j = 0; j < arr2.length; j++) {
+						if (arr2[j][0] == placedBlocks.coords[1][i] && placedBlocks.coords[1][i] < arr2[j][1]) {
+							arr2[j][1] = placedBlocks.coords[1][i];
+						}
+					}
+					if (insert) {
+						arr2.push([placedBlocks.coords[1][i],placedBlocks.coords[0][i]]);
+					}
+				}
+				for (let i in arr2) {
+					for (let j in arr1) {
+						if (arr1[j][0] == arr2[i][0] && (arr1[j][1] + 30) == arr2[i][1]) {
 							stop = true;
 						}
 					}
