@@ -35,26 +35,65 @@ class Block {
 			}
 		}
 		this.fall = function() {
+			
 			let next = false;
+			let bruh = false;
+			let hh = false;
+			////alert(this.coords[0][this.coords[0].length-1]);
 			if (this.coords[0][this.coords[0].length-1] <= 540) {
-				if (1 == 1) {
-					for (let i = 0; i < this.coords[0].length; i++) {
-						let iO = placedBlocks.coords[0].indexOf(this.coords[0][i]+60);
-						if (iO != -1) {
-							let iO2 = placedBlocks.coords[1].indexOf(this.coords[1][i]);
-							if (placedBlocks.coords[0][iO2] == this.coords[0][i]+60) {
-								next = true;
+				let yValsTried = [];
+				for (let i = 0; i < this.coords[0].length; i++) {
+					let iO = [];
+					for (let j = 0; j < placedBlocks.coords[0].length; j++) {
+						if (placedBlocks.coords[0][j] == this.coords[0][i]+30) {
+							iO.push(placedBlocks.coords[1][j]);
+						}
+					}
+					let br = false;
+					if (! yValsTried.includes(this.coords[0][i])) {
+						yValsTried.push(this.coords[0][i]);
+					}
+					else {
+						continue;
+					}
+					if (iO.length != 0) {
+						let toCheck = [];
+						for (let j = 0; j < this.coords[0].length; j++) {
+							if (this.coords[0][j] == this.coords[0][i]) {
+								toCheck.push(this.coords[1][j]);
 							}
 						}
+						for (let j = 0; j < iO.length; j++) {
+							if (toCheck.includes(iO[j])) {
+								bruh = true;
+								next = true;
+								br = true;
+								break;
+							}
+						}
+					}
+					if (br) {
+						break;
+					}
+				}
+				if (!bruh) {
+					for (let i = 0; i < this.coords[0].length; i++) {
 						this.coords[0][i] += 30;
 					}
 				}
+				/*let coords = '';
+				for (let i = 0; i < this.coords[0].length; i++) {
+					coords += String(this.coords[0][i]);
+					coords += ', '
+				}
+				//alert(coords);*/
 			}
-			else {
+			else{
 				next = true;
 			}
 			if (next){
-				let placed = false;
+				////alert('done');
+				/*let placed = false;
 				for (let j = 0; j < this.coords[0].length; j++) {
 					for (let i = 0; i < placedBlocks.coords[0].length;i++) {
 						if (placedBlocks.coords[0][i] < this.coords[0][this.coords[0].length]) {
@@ -64,20 +103,29 @@ class Block {
 						}
 					}
 				}
-				if (!placed) {
-					placed = true;
+				/*if (!placed) {
+					////alert('donfewa');
+					placed = true;*/
 					for (let j = 0; j < this.coords[0].length; j++) {
 						placedBlocks.coords[0].push(this.coords[0][j]);
 						placedBlocks.coords[1].push(this.coords[1][j]);
 						placedBlocks.colors.push(this.color);
 					}
+				/*}*/
+				let coords = '';
+				for (let i = 0; i < placedBlocks.coords[0].length; i++) {
+					coords += String(placedBlocks.coords[0][i]);
+					coords += ', ';
 				}
-				//console.log(placedBlocks);
+				//alert(coords);
+				////console.log(placedBlocks);
 				placedBlocks.fill();
 				placedBlocks.checkLine();
 				newBlock = true;
 			}
-			this.fill();
+			if (!bruh) {
+				this.fill();
+			}
 		}
 		this.move = function(xChange,yChange) {
 			let stop = false;
@@ -238,24 +286,26 @@ let h = window.setInterval(() => {
 		if (groupIndex == numBlocks) {
 			groupIndex = 0;
 			group = newGroup();
-			console.log(currentBlock);
+			//console.log(currentBlock);
 		}
 		currentBlock = group[groupIndex];
 		for (let i in currentBlock.coords[0]) {
-			console.log(currentBlock.coords);
-			console.log(placedBlocks.coords);
 			if (placedBlocks.coords[0].includes(currentBlock.coords[0][i]) && placedBlocks.coords[1].includes(currentBlock.coords[1][i])) {
 				window.clearInterval(h);
 				var loseAudio = document.getElementById("loseAudio");
-				audio.muted = true;
+				themeAudio.pause();
+				themeAudio.currentTime = 0;
 				loseAudio.play();
-				loseAudio.onpause(() => {
-					var endResults = document.getElementById("endResults");
-					endResults.play();
+				loseAudio.addEventListener("ended", e => {
+					var endResultsAudio = document.getElementById("endResultsAudio");
+					endResultsAudio.play();
+					endResultsAudio.addEventListener("ended", function() {
+						this.currentTime = 0;
+						this.play();
+					}, false);
 				})
 				for (let k = 0; k < 20; k++) {
 					for (let j in placedBlocks) {
-						//alert('You Lose.');
 						placedBlocks.coords[0][j] += 30;
 						placedBlocks.fill();
 					}
@@ -270,7 +320,7 @@ var keysDown = [false,false,false,false];
 $('#start').on('click', () => {
 	group = newGroup();
 	currentBlock = group[groupIndex];
-	console.log(currentBlock);
+	//console.log(currentBlock);
 	setImage();
 });
 document.body.addEventListener("keydown", e => {

@@ -20,30 +20,35 @@
 		</style>
 	</head>
 	<body>
-		<audio src="audio/theme.mp3" id="theme"></audio>
+		<audio src="audio/theme.mp3" id="themeAudio"></audio>
 		<audio src="audio/lose.mp3" id="loseAudio"></audio>
-		<audio src="audio/end_results.mp3" id="endResults"></audio>
+		<audio src="audio/end_results.mp3" id="endResultsAudio"></audio>
+		<audio src="audio/drop.mp3" id="dropAudio"></audio>
+		<audio src="audio/line_clear.mp3" id="lineClearAudio"></audio>
+		<audio src="audio/tetris.mp3" id="tetrisAudio"></audio>
+		<audio src="audio/turn.mp3" id="turnAudio"></audio>
 		<h3 align="center"><img id="logo" src="logo.png"></h3>
 		<h3 align="center"><button id="start">Start Game</button></h3>
 		<h1 align="center" style="display: none" id="lose">You Lose!</h1>
 		<h3 align="center" id="score" style="display:none;">Score: 0</h3>
 		<h3 align="center" id="gameContainer" style="display:none"><canvas height="600" width="300" id="game"></canvas></h3>
 		<script>
-			var audio = document.getElementById("theme");
+			var themeAudio = document.getElementById("themeAudio");
 		</script>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 		<script src="js/block.js"></script>
+		<script src="js/audiomanager.js"></script>
 		<script>
 			$('#start').on("click", function() {
 				$('#gameContainer').css('display','block');
 				$('#logo').css('display','none');
 				$('#start').css('display','none');
 				$('#score').css('display','block');
-				audio.addEventListener("ended", function() {
+				themeAudio.addEventListener("ended", function() {
 				    this.currentTime = 0;
 				    this.play();
 				}, false);
-				audio.play();
+				themeAudio.play();
 			});
 		</script>
 	</body>
