@@ -1,19 +1,20 @@
 var score = 0;
+var gameOver = false;
 class Block {
 	constructor(y,x) {
 		this.checkLine = function() {
-			let arr = [];
-			for (let i = 0; i < this.coords[0].length; i++) {
-				arr.push(this.coords[0][i]);
-			}
+			let arr = copyArr(placedBlocks.coords[0])
 			let sortedArr = arr.sort();
 			let t = 0;
 			let c = sortedArr[0];
+			console.log(arr);
 			for (let i = 0; i < sortedArr.length; i++) {
 				if (sortedArr[i] == c) {
 					t++;
+					//alert(t);
 				}
 				else {
+					//alert('new');
 					c = sortedArr[i];
 					t = 0;
 				}
@@ -22,6 +23,94 @@ class Block {
 					$('#score').html('Score: ' + score);
 				}
 			}
+		}
+		this.checkLeftRight = function() {
+			let end = false;
+			let xValsTried = [];
+			for (let i = 0; i < this.coords[1].length; i++) {
+				let iO = [];
+				for (let j = 0; j < placedBlocks.coords[1].length; j++) {
+					if (placedBlocks.coords[1][j] == this.coords[1][i]+30 || placedBlocks.coords[1][j] == this.coords[1][i]-30) {
+						iO.push(placedBlocks.coords[0][j]);
+					}
+				}
+				let br = false;
+				if (! xValsTried.includes(this.coords[1][i])) {
+					xValsTried.push(this.coords[1][i]);
+				}
+				else {
+					continue;
+				}
+				if (iO.length != 0) {
+					let toCheck = [];
+					for (let j = 0; j < this.coords[1].length; j++) {
+						if (this.coords[1][j] == this.coords[1][i]) {
+							toCheck.push(this.coords[0][j]);
+						}
+					}
+					for (let j = 0; j < iO.length; j++) {
+						if (toCheck.includes(iO[j])) {
+							end = true;
+							br = true;
+							break;
+						}
+					}
+				}
+				if (br) {
+					break;
+				}
+			}
+			return end;
+		}
+		this.checkStop = function() {
+			let end = false;
+			let yValsTried = [];
+			if (this.coords[0][this.coords[0].length-1] >= 570) {
+				return true;
+			}
+			//iterate through all individual blocks in the current piece sorted by y position
+			for (let i = 0; i < this.coords[0].length; i++) {
+				let iO = [];
+				//Find all placed blocks that are directly below the current individual block
+				//And add those pieces' x values to the iO array.
+				for (let j = 0; j < placedBlocks.coords[0].length; j++) {
+					if (placedBlocks.coords[0][j] == this.coords[0][i]+30) {
+						iO.push(placedBlocks.coords[1][j]);
+					}
+				}
+				let br = false;
+				//Skip the current block in the tetris piece if the y value has already been tried.
+				if (! yValsTried.includes(this.coords[0][i])) {
+					yValsTried.push(this.coords[0][i]);
+				}
+				else {
+					continue;
+				}
+				if (iO.length != 0) {
+					//Find all blocks in the current piece that should be checked
+					//Because they have the same y value as the original piece being checked
+					//And add those pieces' x values to the toCheck array
+					let toCheck = [];
+					for (let j = 0; j < this.coords[0].length; j++) {
+						if (this.coords[0][j] == this.coords[0][i]) {
+							toCheck.push(this.coords[1][j]);
+						}
+					}
+					//Checks if the x values in toCheck have a match with the x values in iO
+					//If so, the piece needs to stop.
+					for (let j = 0; j < iO.length; j++) {
+						if (toCheck.includes(iO[j])) {
+							end = true;
+							br = true;
+							break;
+						}
+					}
+				}
+				if (br) {
+					break;
+				}
+			}
+			return end;
 		}
 		this.fill = function() {
 			if (this.colors == null) {
@@ -35,143 +124,34 @@ class Block {
 			}
 		}
 		this.fall = function() {
-			
-			let next = false;
-			let bruh = false;
-			let hh = false;
-			////alert(this.coords[0][this.coords[0].length-1]);
-			if (this.coords[0][this.coords[0].length-1] <= 540) {
-				let yValsTried = [];
-				for (let i = 0; i < this.coords[0].length; i++) {
-					let iO = [];
-					for (let j = 0; j < placedBlocks.coords[0].length; j++) {
-						if (placedBlocks.coords[0][j] == this.coords[0][i]+30) {
-							iO.push(placedBlocks.coords[1][j]);
-						}
-					}
-					let br = false;
-					if (! yValsTried.includes(this.coords[0][i])) {
-						yValsTried.push(this.coords[0][i]);
-					}
-					else {
-						continue;
-					}
-					if (iO.length != 0) {
-						let toCheck = [];
-						for (let j = 0; j < this.coords[0].length; j++) {
-							if (this.coords[0][j] == this.coords[0][i]) {
-								toCheck.push(this.coords[1][j]);
-							}
-						}
-						for (let j = 0; j < iO.length; j++) {
-							if (toCheck.includes(iO[j])) {
-								bruh = true;
-								next = true;
-								br = true;
-								break;
-							}
-						}
-					}
-					if (br) {
-						break;
-					}
-				}
-				if (!bruh) {
-					for (let i = 0; i < this.coords[0].length; i++) {
-						this.coords[0][i] += 30;
-					}
-				}
-				/*let coords = '';
-				for (let i = 0; i < this.coords[0].length; i++) {
-					coords += String(this.coords[0][i]);
-					coords += ', '
-				}
-				//alert(coords);*/
-			}
-			else{
-				next = true;
-			}
+			let next = this.checkStop();
 			if (next){
-				////alert('done');
-				/*let placed = false;
 				for (let j = 0; j < this.coords[0].length; j++) {
-					for (let i = 0; i < placedBlocks.coords[0].length;i++) {
-						if (placedBlocks.coords[0][i] < this.coords[0][this.coords[0].length]) {
-							placed = true;
-							placedBlocks.coords[0].splice(i-1,0,this.coords[0][j]);
-							placedBlocks.coords[1].splice(i-1,0,this.coords[1][j]);
-						}
-					}
+					placedBlocks.coords[0].push(this.coords[0][j]);
+					placedBlocks.coords[1].push(this.coords[1][j]);
+					placedBlocks.colors.push(this.color);
 				}
-				/*if (!placed) {
-					////alert('donfewa');
-					placed = true;*/
-					for (let j = 0; j < this.coords[0].length; j++) {
-						placedBlocks.coords[0].push(this.coords[0][j]);
-						placedBlocks.coords[1].push(this.coords[1][j]);
-						placedBlocks.colors.push(this.color);
-					}
-				/*}*/
-				let coords = '';
-				for (let i = 0; i < placedBlocks.coords[0].length; i++) {
-					coords += String(placedBlocks.coords[0][i]);
-					coords += ', ';
-				}
-				//alert(coords);
-				////console.log(placedBlocks);
 				placedBlocks.fill();
 				placedBlocks.checkLine();
 				newBlock = true;
 			}
-			if (!bruh) {
+			else {
+				this.move(0,30,false);
 				this.fill();
 			}
 		}
-		this.move = function(xChange,yChange) {
+		this.move = function(xChange,yChange,bypass) {
 			let stop = false;
-			if (yChange != 0) {
-				if (placedBlocks.coords[0].includes(currentBlock.coords[0][currentBlock.coords[0].length-1]+30)) {
-					let arr1 = [];
-					let arr2 = [];
-					//Goes through all x values of current block and adds their lowest y value to arr1
-					for (let i = 0; i < currentBlock.coords[1].length; i++) {
-						let insert = true;
-						for (let j = 0; j < arr1.length; j++) {
-							if (arr1[j][0] == currentBlock.coords[1][i] && currentBlock.coords[1][i] > arr1[j][1]) {
-								arr1[j][1] = currentBlock.coords[1][i];
-							}
-						}
-						if (insert) {
-							arr1.push([currentBlock.coords[1][i],currentBlock.coords[0][i]]);
-						}
-					}
-					//Goes through all x values of placed blocks and adds their highest y value to arr1
-					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
-						let insert = true;
-						for (let j = 0; j < arr2.length; j++) {
-							if (arr2[j][0] == placedBlocks.coords[1][i] && placedBlocks.coords[1][i] < arr2[j][1]) {
-								arr2[j][1] = placedBlocks.coords[1][i];
-							}
-						}
-						if (insert) {
-							arr2.push([placedBlocks.coords[1][i],placedBlocks.coords[0][i]]);
-						}
-					}
-					for (let i in arr2) {
-						for (let j in arr1) {
-							if (arr1[j][0] == arr2[i][0] && (arr1[j][1] + 30) == arr2[i][1]) {
-								stop = true;
-							}
-						}
-					}
-				}
-			}
-			if (this.coords[0][this.coords[0].length-1] <= 540 && ! stop) {
+			if ((yChange != 0 && ! this.checkStop()) || (xChange != 0 && ! this.checkLeftRight()) || bypass) {
 				for (let i = 0; i < this.coords[0].length; i++) {
 					this.coords[1][i] += xChange;
 					this.coords[0][i] += yChange;
 				}
 			}
+			this.fill();
+		}
+		this.destroy = function() {
+			this.coords = [[],[]];
 			this.fill();
 		}
 	}
@@ -288,10 +268,13 @@ let h = window.setInterval(() => {
 			group = newGroup();
 			//console.log(currentBlock);
 		}
-		currentBlock = group[groupIndex];
+		if (!gameOver) {
+			currentBlock = group[groupIndex];
+		}
 		for (let i in currentBlock.coords[0]) {
 			if (placedBlocks.coords[0].includes(currentBlock.coords[0][i]) && placedBlocks.coords[1].includes(currentBlock.coords[1][i])) {
 				window.clearInterval(h);
+				gameOver = true;
 				var loseAudio = document.getElementById("loseAudio");
 				themeAudio.pause();
 				themeAudio.currentTime = 0;
@@ -304,6 +287,15 @@ let h = window.setInterval(() => {
 						this.play();
 					}, false);
 				})
+				currentBlock.destroy();
+				let j = 0;
+				let clearScreen = window.setInterval(() => {
+					j++;
+					placedBlocks.move(0,240,true);
+					if (j == 5) {
+						window.clearInterval(clearScreen);
+					}
+				},100);
 				for (let k = 0; k < 20; k++) {
 					for (let j in placedBlocks) {
 						placedBlocks.coords[0][j] += 30;
@@ -327,30 +319,27 @@ document.body.addEventListener("keydown", e => {
 	if (e.key == "ArrowRight") {
 		let a = copyArr(currentBlock.coords[1]).sort();
 		if (a[a.length-1]<270) {
-			currentBlock.move(30,0);
+			currentBlock.move(30,0,false);
 		}
 	}
 	if (e.key == "ArrowLeft") {
 		let a = copyArr(currentBlock.coords[1]).sort();
 		if (a[0]>0) {
-			currentBlock.move(-30,0);
+			currentBlock.move(-30,0,false);
 		}
 	}
 	if (e.key == "ArrowDown") {
-		currentBlock.move(0,30);
+		currentBlock.move(0,30,false);
 	}
 	if (e.key == " ") { 
 		//570
 		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
-			let s = false;
-			for (let i = 0; i < currentBlock.coords[0].length; i++) {
-				if (placedBlocks.coords[1].includes(currentBlock.coords[1][i])) {
-					s = true;
-					break;
+			if (! currentBlock.checkStop()) {
+				for (let i = 0; i < currentBlock.coords[0].length; i++) {
+					currentBlock.coords[0][i] += 30;
 				}
-				currentBlock.coords[0][i] += 30;
 			}
-			if (s) {
+			else {
 				break;
 			}
 		}

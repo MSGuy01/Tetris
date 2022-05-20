@@ -28,7 +28,8 @@
 		<audio src="audio/tetris.mp3" id="tetrisAudio"></audio>
 		<audio src="audio/turn.mp3" id="turnAudio"></audio>
 		<h3 align="center"><img id="logo" src="logo.png"></h3>
-		<h3 align="center"><button id="start">Start Game</button></h3>
+		<h3 align="center"><button id="start">Play</button></h3>
+		<h3 align="center"><button id="create">Create</button></h3>
 		<h1 align="center" style="display: none" id="lose">You Lose!</h1>
 		<h3 align="center" id="score" style="display:none;">Score: 0</h3>
 		<h3 align="center" id="gameContainer" style="display:none"><canvas height="600" width="300" id="game"></canvas></h3>
@@ -37,12 +38,12 @@
 		</script>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 		<script src="js/block.js"></script>
-		<script src="js/audiomanager.js"></script>
 		<script>
 			$('#start').on("click", function() {
 				$('#gameContainer').css('display','block');
 				$('#logo').css('display','none');
 				$('#start').css('display','none');
+				$('#create').css('display','none');
 				$('#score').css('display','block');
 				themeAudio.addEventListener("ended", function() {
 				    this.currentTime = 0;
