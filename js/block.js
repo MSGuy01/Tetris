@@ -2,6 +2,8 @@ var score = 0;
 var gameOver = false;
 class Block {
 	constructor(y,x) {
+		this.y = y;
+		this.x = x;
 		this.checkLine = function() {
 			let arr = copyArr(placedBlocks.coords[0])
 			let sortedArr = arr.sort();
@@ -11,10 +13,10 @@ class Block {
 			for (let i = 0; i < sortedArr.length; i++) {
 				if (sortedArr[i] == c) {
 					t++;
-					//alert(t);
+					////alert(t);
 				}
 				else {
-					//alert('new');
+					////alert('new');
 					c = sortedArr[i];
 					t = 0;
 				}
@@ -24,7 +26,11 @@ class Block {
 				}
 			}
 		}
-		this.checkLeftRight = function() {
+		this.checkLeftRight = function(left) {
+			let a = copyArr(currentBlock.coords[1]).sort();
+			if ((a[a.length-1]>269 && !left)|| (a[0] < 1 && left)) {
+				return true;
+			}
 			let end = false;
 			let xValsTried = [];
 			for (let i = 0; i < this.coords[1].length; i++) {
@@ -142,13 +148,20 @@ class Block {
 		}
 		this.move = function(xChange,yChange,bypass) {
 			let stop = false;
-			if ((yChange != 0 && ! this.checkStop()) || (xChange != 0 && ! this.checkLeftRight()) || bypass) {
+			this.x += xChange;
+			this.y += yChange;
+			if ((yChange != 0 && ! this.checkStop()) || (xChange != 0 && ! this.checkLeftRight(xChange < 0)) || bypass) {
 				for (let i = 0; i < this.coords[0].length; i++) {
 					this.coords[1][i] += xChange;
 					this.coords[0][i] += yChange;
 				}
 			}
 			this.fill();
+		}
+		this.rotate = function() {
+			//alert(this.y);
+			this.changeRotation(this.y,this.x);
+			this.coords = this.rotation1;
 		}
 		this.destroy = function() {
 			this.coords = [[],[]];
@@ -160,6 +173,10 @@ class IBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'aqua';
+		this.rotation1 = [[y,y+30,y+60,y+90],[x,x,x,x]];
+		this.changeRotation = function(y,x) {
+			this.rotation1 = [[y,y+30,y+60,y+90],[x,x,x,x]];
+		}
 		this.coords = [[y,y,y,y],[x,x+30,x+60,x+90]];
 	}
 }
@@ -317,19 +334,16 @@ $('#start').on('click', () => {
 });
 document.body.addEventListener("keydown", e => {
 	if (e.key == "ArrowRight") {
-		let a = copyArr(currentBlock.coords[1]).sort();
-		if (a[a.length-1]<270) {
-			currentBlock.move(30,0,false);
-		}
+		currentBlock.move(30,0,false);
 	}
 	if (e.key == "ArrowLeft") {
-		let a = copyArr(currentBlock.coords[1]).sort();
-		if (a[0]>0) {
-			currentBlock.move(-30,0,false);
-		}
+		currentBlock.move(-30,0,false);
 	}
 	if (e.key == "ArrowDown") {
 		currentBlock.move(0,30,false);
+	}
+	if (e.key == "ArrowUp") {
+		currentBlock.rotate();
 	}
 	if (e.key == " ") { 
 		//570
