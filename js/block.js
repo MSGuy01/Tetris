@@ -1,28 +1,37 @@
 var score = 0;
 var gameOver = false;
+var dropAudio = document.getElementById("dropAudio");
+var lineClearAudio = document.getElementById("lineClearAudio")
 class Block {
 	constructor(y,x) {
 		this.y = y;
 		this.x = x;
+		this.rotI = 0;
 		this.checkLine = function() {
 			let arr = copyArr(placedBlocks.coords[0])
 			let sortedArr = arr.sort();
 			let t = 0;
-			let c = sortedArr[0];
-			console.log(arr);
+			let c = -1;
 			for (let i = 0; i < sortedArr.length; i++) {
-				if (sortedArr[i] == c) {
-					t++;
-					////alert(t);
-				}
-				else {
-					////alert('new');
-					c = sortedArr[i];
+				if (c != sortedArr[i]) {
 					t = 0;
+					c = sortedArr[i];
 				}
+				t++;
 				if (t == 10) {
-					score += 1000;
-					$('#score').html('Score: ' + score);
+					lineClearAudio.play();
+					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
+						if (placedBlocks.coords[0][i] == c) {
+							placedBlocks.coords[0].splice(i,1);
+							placedBlocks.coords[1].splice(i,1);
+							placedBlocks.colors.splice(i,1);
+						}
+					}
+					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
+						if (placedBlocks.coords[0][i] < c) {
+							placedBlocks.coords[0][i] += 30;
+						}
+					}
 				}
 			}
 		}
@@ -161,7 +170,6 @@ class Block {
 		this.rotate = function() {
 			//alert(this.y);
 			this.changeRotation(this.y,this.x);
-			this.coords = this.rotation1;
 		}
 		this.destroy = function() {
 			this.coords = [[],[]];
@@ -173,32 +181,71 @@ class IBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'aqua';
-		this.rotation1 = [[y,y+30,y+60,y+90],[x,x,x,x]];
+		this.rotations = [[[y,y,y,y],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x,x,x,x]]];
+		this.coords = this.rotations[this.rotI];
 		this.changeRotation = function(y,x) {
-			this.rotation1 = [[y,y+30,y+60,y+90],[x,x,x,x]];
+			this.rotations = [[[y,y,y,y],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x,x,x,x]]];
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
 		}
-		this.coords = [[y,y,y,y],[x,x+30,x+60,x+90]];
+		this.changeRotation(y,x);
 	}
 }
 class TBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'purple';
-		this.coords = [[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]];
+		//this.coords = [[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]];
+		this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x,x,x+30,x]], [[y,y,y,y+30],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
+		this.coords = this.rotations[this.rotI];
+		this.changeRotation = function(y,x) {
+			this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x,x,x+30,x]], [[y,y,y,y+30],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
+		}
+		this.changeRotation(y,x);
 	}
 }
 class LBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'orange';
-		this.coords = [[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]];
+		//this.coords = [[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]];
+		this.rotations = [[[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]], [[y,y+30,y+60,y+60],[x,x,x,x+30]], [[y,y,y,y+30],[x,x+30,x+60,x]], [[y,y,y+30,y+60],[x,x+30,x+30,x+30]]];
+		this.coords = this.rotations[this.rotI];
+		this.changeRotation = function(y,x) {
+			this.rotations = [[[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]], [[y,y+30,y+60,y+60],[x,x,x,x+30]], [[y,y,y,y+30],[x,x+30,x+60,x]], [[y,y,y+30,y+60],[x,x+30,x+30,x+30]]];
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
+		}
+		this.changeRotation(y,x);
 	}
 }
 class JBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'blue';
-		this.coords = [[y,y+30,y+30,y+30],[x,x,x+30,x+60]];
+		//this.coords = [[y,y+30,y+30,y+30],[x,x,x+30,x+60]];
+		this.rotations = [[[y,y+30,y+30,y+30],[x,x,x+30,x+60]], [[y,y,y+30,y+60],[x,x+30,x,x]], [[y,y,y,y+30],[x,x+30,x+60,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x,x+30]]];
+		this.coords = this.rotations[this.rotI];
+		this.changeRotation = function(y,x) {
+			this.rotations = [[[y,y+30,y+30,y+30],[x,x,x+30,x+60]], [[y,y,y+30,y+60],[x,x+30,x,x]], [[y,y,y,y+30],[x,x+30,x+60,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x,x+30]]];
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
+		}
+		this.changeRotation(y,x);
 	}
 }
 class OBlock extends Block{
@@ -206,20 +253,44 @@ class OBlock extends Block{
 		super(y,x);
 		this.color = 'yellow';
 		this.coords = [[y,y,y+30,y+30],[x,x+30,x,x+30]];
+		this.changeRotation = function(y,x) {
+		}
 	}
 }
 class SBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'green';
-		this.coords = [[y,y,y+30,y+30],[x+30,x+60,x,x+30]];
+		//this.coords = [[y,y,y+30,y+30],[x+30,x+60,x,x+30]];
+		this.rotations = [[[y,y,y+30,y+30],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x,x,x+30,x+30]]];
+		this.coords = this.rotations[this.rotI];
+		this.changeRotation = function(y,x) {
+			this.rotations = [[[y,y,y+30,y+30],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x,x,x+30,x+30]]];
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
+		}
+		this.changeRotation(y,x);
 	}
 }
 class ZBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'red';
-		this.coords = [[y,y,y+30,y+30],[x,x+30,x+30,x+60]];
+		//this.coords = [[y,y,y+30,y+30],[x,x+30,x+30,x+60]];
+		this.rotations = [[[y,y,y+30,y+30],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x]]];
+		this.coords = this.rotations[this.rotI];
+		this.changeRotation = function(y,x) {
+			this.rotations = [[[y,y,y+30,y+30],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x]]];
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
+		}
+		this.changeRotation(y,x);
 	}
 }
 const numBlocks = 7;
@@ -347,6 +418,7 @@ document.body.addEventListener("keydown", e => {
 	}
 	if (e.key == " ") { 
 		//570
+		dropAudio.play();
 		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
 			if (! currentBlock.checkStop()) {
 				for (let i = 0; i < currentBlock.coords[0].length; i++) {
