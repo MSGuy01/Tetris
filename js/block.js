@@ -13,25 +13,16 @@ class Block {
 			let t = 0;
 			let c = -1;
 			for (let i = 0; i < sortedArr.length; i++) {
+				console.log(sortedArr);
 				if (c != sortedArr[i]) {
 					t = 0;
 					c = sortedArr[i];
 				}
 				t++;
 				if (t == 10) {
+					alert('new line');
 					lineClearAudio.play();
-					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
-						if (placedBlocks.coords[0][i] == c) {
-							placedBlocks.coords[0].splice(i,1);
-							placedBlocks.coords[1].splice(i,1);
-							placedBlocks.colors.splice(i,1);
-						}
-					}
-					for (let i = 0; i < placedBlocks.coords[0].length; i++) {
-						if (placedBlocks.coords[0][i] < c) {
-							placedBlocks.coords[0][i] += 30;
-						}
-					}
+					alert(sortedArr[i-9]);
 				}
 			}
 		}
