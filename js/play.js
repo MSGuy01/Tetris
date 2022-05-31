@@ -1,31 +1,55 @@
-var score = 0;
-var gameOver = false;
-var dropAudio = document.getElementById("dropAudio");
-var lineClearAudio = document.getElementById("lineClearAudio")
 class Block {
+	/**
+	 * Creates a Tetris game piece
+	 * @param {number} y Starting y position of the piece
+	 * @param {number} x Starting x position of the piece
+	 */
 	constructor(y,x) {
 		this.y = y;
 		this.x = x;
 		this.rotI = 0;
+		
+		/**
+		 * Checks whether new completed lines are present in the Block object
+		 */
 		this.checkLine = function() {
-			let arr = copyArr(placedBlocks.coords[0])
-			let sortedArr = arr.sort();
-			let t = 0;
-			let c = -1;
-			for (let i = 0; i < sortedArr.length; i++) {
-				console.log(sortedArr);
-				if (c != sortedArr[i]) {
-					t = 0;
-					c = sortedArr[i];
+			window.clearInterval(gameInterval);
+			startInterval();
+			let l = 0;
+			for (let i = 570; i > 0; i-=30) {
+				let o = getOccurrence(placedBlocks.coords[0],i);
+				if (o == 10) {
+					l++;
+					let gv = getVals(placedBlocks.coords[0],i);
+					for (let j in gv) {
+						placedBlocks.coords[0].splice(gv[j],1);
+						placedBlocks.coords[1].splice(gv[j],1);
+						placedBlocks.colors.splice(gv[j],1);
+					}
+					for (let j in placedBlocks.coords[0]) {
+						if (placedBlocks.coords[0][j] < i) {
+							placedBlocks.coords[0][j]+=30;
+						}
+					}
+					i+=30;
 				}
-				t++;
-				if (t == 10) {
-					alert('new line');
-					lineClearAudio.play();
-					alert(sortedArr[i-9]);
+				else if (o == 0) {
+					break;
 				}
 			}
+			linesCleared += l;
+			score += scoring[l]*(level+1)
+			if (linesCleared != 0 && Math.round(linesCleared/10) > (level-1)) {
+				level++;
+				speed -= 20;
+			}
 		}
+
+		/**
+		 * Checks whether you can move the Block object left or right
+		 * @param {boolean} left True if the block is being moved left, false for right
+		 * @returns {boolean} Whether the move is legal
+		 */
 		this.checkLeftRight = function(left) {
 			let a = copyArr(currentBlock.coords[1]).sort();
 			if ((a[a.length-1]>269 && !left)|| (a[0] < 1 && left)) {
@@ -68,13 +92,18 @@ class Block {
 			}
 			return end;
 		}
+
+		/**
+		 * Checks whether the Block object should stop moving down
+		 * @returns {boolean} Whether the block should stop moving down
+		 */
 		this.checkStop = function() {
 			let end = false;
 			let yValsTried = [];
 			if (this.coords[0][this.coords[0].length-1] >= 570) {
 				return true;
 			}
-			//iterate through all individual blocks in the current piece sorted by y position
+			//Iterate through all individual blocks in the current piece sorted by y position
 			for (let i = 0; i < this.coords[0].length; i++) {
 				let iO = [];
 				//Find all placed blocks that are directly below the current individual block
@@ -118,10 +147,15 @@ class Block {
 			}
 			return end;
 		}
+
+		/**
+		 * Draws and fills the Block object its specified color on the canvas
+		 */
 		this.fill = function() {
 			if (this.colors == null) {
 				ctx.fillStyle = this.color;
 			}
+			//If this is the placedblocks object, iterate through all colors and fill accordingly
 			for (let i = 0; i < this.coords[0].length; i++) {
 				if (this.colors != null) {
 					ctx.fillStyle = this.colors[i];
@@ -129,8 +163,13 @@ class Block {
 				ctx.fillRect(this.coords[1][i],this.coords[0][i],30,30);
 			}
 		}
+
+		/**
+		 * Moves the block down 1 row
+		 */
 		this.fall = function() {
 			let next = this.checkStop();
+			//If the block is done falling, add it to the placed blocks object
 			if (next){
 				for (let j = 0; j < this.coords[0].length; j++) {
 					placedBlocks.coords[0].push(this.coords[0][j]);
@@ -146,8 +185,14 @@ class Block {
 				this.fill();
 			}
 		}
+
+		/**
+		 * Moves the Block object a specified direction
+		 * @param {number} xChange How much to move the block in the x direction
+		 * @param {number} yChange HOw much to move the block in the y direction
+		 * @param {boolean} bypass Whether to skip checking whether the move is legal
+		 */
 		this.move = function(xChange,yChange,bypass) {
-			let stop = false;
 			this.x += xChange;
 			this.y += yChange;
 			if ((yChange != 0 && ! this.checkStop()) || (xChange != 0 && ! this.checkLeftRight(xChange < 0)) || bypass) {
@@ -158,22 +203,43 @@ class Block {
 			}
 			this.fill();
 		}
+
+		/**
+		 * Rotates the Block object
+		 */
 		this.rotate = function() {
-			//alert(this.y);
 			this.changeRotation(this.y,this.x);
 		}
+
+		/**
+		 * Deletes a block
+		 */
 		this.destroy = function() {
 			this.coords = [[],[]];
 			this.fill();
 		}
 	}
 }
+
+/**
+* Creates a new I block
+* @param {number} y Starting y position of the piece
+* @param {number} x Starting x position of the piece
+*/
 class IBlock extends Block{
 	constructor(y,x) {
+		//Call the superclass
 		super(y,x);
 		this.color = 'aqua';
+		//Each rotation's coordinates
 		this.rotations = [[[y,y,y,y],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x,x,x,x]]];
+		//Sets up the variable containing the current coordinates of the block
 		this.coords = this.rotations[this.rotI];
+		/**
+		 * Switches block to the next rotation
+		 * @param {*} y Current y position
+		 * @param {*} x Current x position
+		 */
 		this.changeRotation = function(y,x) {
 			this.rotations = [[[y,y,y,y],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x,x,x,x]]];
 			this.coords = this.rotations[this.rotI];
@@ -182,14 +248,20 @@ class IBlock extends Block{
 				this.rotI = 0;
 			}
 		}
+		//Initialize the block to the first rotation
 		this.changeRotation(y,x);
 	}
 }
+
+/**
+* Creates a new T block
+* @param {number} y Starting y position of the piece
+* @param {number} x Starting x position of the piece
+*/
 class TBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'purple';
-		//this.coords = [[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]];
 		this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x,x,x+30,x]], [[y,y,y,y+30],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
 		this.coords = this.rotations[this.rotI];
 		this.changeRotation = function(y,x) {
@@ -203,11 +275,16 @@ class TBlock extends Block{
 		this.changeRotation(y,x);
 	}
 }
+
+/**
+* Creates a new L block
+* @param {number} y Starting y position of the piece
+* @param {number} x Starting x position of the piece
+*/
 class LBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'orange';
-		//this.coords = [[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]];
 		this.rotations = [[[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]], [[y,y+30,y+60,y+60],[x,x,x,x+30]], [[y,y,y,y+30],[x,x+30,x+60,x]], [[y,y,y+30,y+60],[x,x+30,x+30,x+30]]];
 		this.coords = this.rotations[this.rotI];
 		this.changeRotation = function(y,x) {
@@ -221,11 +298,16 @@ class LBlock extends Block{
 		this.changeRotation(y,x);
 	}
 }
+
+/**
+* Creates a new J block
+* @param {number} y Starting y position of the piece
+* @param {number} x Starting x position of the piece
+*/
 class JBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'blue';
-		//this.coords = [[y,y+30,y+30,y+30],[x,x,x+30,x+60]];
 		this.rotations = [[[y,y+30,y+30,y+30],[x,x,x+30,x+60]], [[y,y,y+30,y+60],[x,x+30,x,x]], [[y,y,y,y+30],[x,x+30,x+60,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x,x+30]]];
 		this.coords = this.rotations[this.rotI];
 		this.changeRotation = function(y,x) {
@@ -239,6 +321,12 @@ class JBlock extends Block{
 		this.changeRotation(y,x);
 	}
 }
+
+/**
+* Creates a new O block
+* @param {number} y Starting y position of the piece
+* @param {number} x Starting x position of the piece
+*/
 class OBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
@@ -248,11 +336,16 @@ class OBlock extends Block{
 		}
 	}
 }
+
+/**
+* Creates a new S block
+* @param {number} y Starting y position of the piece
+* @param {number} x Starting x position of the piece
+*/
 class SBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'green';
-		//this.coords = [[y,y,y+30,y+30],[x+30,x+60,x,x+30]];
 		this.rotations = [[[y,y,y+30,y+30],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x,x,x+30,x+30]]];
 		this.coords = this.rotations[this.rotI];
 		this.changeRotation = function(y,x) {
@@ -266,11 +359,16 @@ class SBlock extends Block{
 		this.changeRotation(y,x);
 	}
 }
+
+/**
+* Creates a new Z block
+* @param {number} y Starting y position of the piece
+* @param {number} x Starting x position of the piece
+*/
 class ZBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'red';
-		//this.coords = [[y,y,y+30,y+30],[x,x+30,x+30,x+60]];
 		this.rotations = [[[y,y,y+30,y+30],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x]]];
 		this.coords = this.rotations[this.rotI];
 		this.changeRotation = function(y,x) {
@@ -284,20 +382,90 @@ class ZBlock extends Block{
 		this.changeRotation(y,x);
 	}
 }
+//Define the canvas
+const c = document.getElementById("game");
+const ctx = c.getContext("2d");
+//How many different types of tetris blocks there are available
 const numBlocks = 7;
-var c = document.getElementById("game");
-var ctx = c.getContext("2d");
+//How much each number of lines should be multiplied by when scoring
+const scoring = [0,40,100,300,1200];
+//Audio
+const dropAudio = document.getElementById("dropAudio");
+const lineClearAudio = document.getElementById("lineClearAudio");
+//Up, down, left, right
+var keysDown = [false,false,false,false];
+//Master game interval
+var gameInterval;
+//Whether a new block should be created on this frame
 var newBlock = false;
-var newGroup = function() {
+//Game stats
+var score = 0;
+var level = 1;
+var speed = 500;
+var linesCleared = 0;
+var gameOver = false;
+//True if a block has already been moved in the current frame
+var move = true;
+//What position the current block is in the current group
+var groupIndex = 0;
+//Stores all the blocks in the current group
+var group;
+//Stores the block currently being played
+var currentBlock;
+//Initialize the Block object storing all of the placed blocks
+var placedBlocks = new Block;
+placedBlocks.coords = [
+	[],
+	[]
+]
+placedBlocks.colors = [];
+
+
+//FUNCTIONS
+
+/**
+ * Gets how many times a value appears in an array
+ * 
+ * @param {Array} array Array to search
+ * @param {*} value Value to search for
+ * @returns {number} Times value appears in array
+ */
+const getOccurrence = function(array, value) {
+    return array.filter((v) => (v === value)).length;
+}
+
+/**
+ * Gets all indices a value appears in an array (and anticipates each of these indices being deleted)
+ * 
+ * @param {Array} array Array to search
+ * @param {*} value Value to search for
+ * @returns {Array} Array containing all indices of value in array
+ */
+const getVals = function(array, value) {
+	let finalArr = [];
+	for (let i in array) {
+		if (array[i] == value) {
+			finalArr.push(i-finalArr.length);
+		}
+	}
+	return finalArr;
+}
+
+/**
+ * Creates a new set of random Tetris blocks
+ * 
+ * @returns {Array} New set of random Tetris blocks
+ */
+const newGroup = function() {
 	let arr = [];
 	let used = [];
 	for (let i = 0; i < numBlocks; i++) {
-		let move = false;
+		let blockWorks = false;
 		let choice;
-		while (!move){
+		while (!blockWorks){
 			choice = Math.floor(Math.random() * numBlocks);
 			if (!used.includes(choice)) {
-				move = true;
+				blockWorks = true;
 			}
 		}
 		used.push(choice);
@@ -327,73 +495,139 @@ var newGroup = function() {
 	}
 	return arr;
 }
-var placedBlocks = new Block;
-var group;
-placedBlocks.coords = [
-	[],
-	[]
-]
-placedBlocks.colors = [];
-var currentBlock;
-var time = 0;
-var move = true;
-var groupIndex = 0;
-let h = window.setInterval(() => {
-	move = true;
-	if (newBlock) {
-		groupIndex++;
-		if (groupIndex == numBlocks) {
-			groupIndex = 0;
-			group = newGroup();
-			//console.log(currentBlock);
-		}
-		if (!gameOver) {
-			currentBlock = group[groupIndex];
-		}
-		for (let i in currentBlock.coords[0]) {
-			if (placedBlocks.coords[0].includes(currentBlock.coords[0][i]) && placedBlocks.coords[1].includes(currentBlock.coords[1][i])) {
-				window.clearInterval(h);
-				gameOver = true;
-				var loseAudio = document.getElementById("loseAudio");
-				themeAudio.pause();
-				themeAudio.currentTime = 0;
-				loseAudio.play();
-				loseAudio.addEventListener("ended", e => {
-					var endResultsAudio = document.getElementById("endResultsAudio");
-					endResultsAudio.play();
-					endResultsAudio.addEventListener("ended", function() {
-						this.currentTime = 0;
-						this.play();
-					}, false);
-				})
-				currentBlock.destroy();
-				let j = 0;
-				let clearScreen = window.setInterval(() => {
-					j++;
-					placedBlocks.move(0,240,true);
-					if (j == 5) {
-						window.clearInterval(clearScreen);
-					}
-				},100);
-				for (let k = 0; k < 20; k++) {
-					for (let j in placedBlocks) {
-						placedBlocks.coords[0][j] += 30;
-						placedBlocks.fill();
+
+/**
+ * Creates a new Tetris game checker interval in order to update the speed
+ */
+const startInterval = function() {
+	gameInterval = window.setInterval(() => {
+		//Update the stat labels
+		$('#level').html('Level: ' + level);
+		$('#linesCleared').html('Lines Cleared: ' + linesCleared);
+		$('#score').html('Score: ' + score);
+		move = true;
+		//If a new block should be created on this frame, move up in the group
+		if (newBlock) {
+			groupIndex++;
+			//Create a new group if the old one has been used up
+			if (groupIndex == numBlocks) {
+				groupIndex = 0;
+				group = newGroup();
+			}
+			if (!gameOver) {
+				currentBlock = group[groupIndex];
+			}
+			//Check whether the game is over
+			for (let i in currentBlock.coords[0]) {
+				if (placedBlocks.coords[0].includes(currentBlock.coords[0][i]) && placedBlocks.coords[1].includes(currentBlock.coords[1][i])) {
+					//If the game is over, clear the screen and play the lose audio
+					window.clearInterval(gameInterval);
+					gameOver = true;
+					var loseAudio = document.getElementById("loseAudio");
+					themeAudio.pause();
+					themeAudio.currentTime = 0;
+					loseAudio.play();
+					loseAudio.addEventListener("ended", e => {
+						var endResultsAudio = document.getElementById("endResultsAudio");
+						endResultsAudio.play();
+						endResultsAudio.addEventListener("ended", function() {
+							this.currentTime = 0;
+							this.play();
+						}, false);
+					})
+					currentBlock.destroy();
+					let j = 0;
+					let clearScreen = window.setInterval(() => {
+						j++;
+						placedBlocks.move(0,240,true);
+						if (j == 5) {
+							window.clearInterval(clearScreen);
+						}
+					},100);
+					for (let k = 0; k < 20; k++) {
+						for (let j in placedBlocks) {
+							placedBlocks.coords[0][j] += 30;
+							placedBlocks.fill();
+						}
 					}
 				}
 			}
+			newBlock = false;
 		}
-		newBlock = false;
+	}, speed);
+}
+
+/**
+ * Draws the background of the game canvas
+ */
+const background = function() {
+	let img = new Image();
+	img.src = 'grid.png';
+	img.onload = () => {
+	  ctx.drawImage(img,0,0,300,600);
 	}
-}, 500);
-//up,down,left,right
-var keysDown = [false,false,false,false];
+}
+
+/**
+ * Renders the background and the currently placed blocks in the game
+ */
+const render = function(c){
+	background();
+	placedBlocks.fill();
+}
+
+/**
+ * Constantly renders and updates the game canvas
+ */
+const setImage = function(){
+	var canvas = document.getElementById("game");
+	var ctx = canvas.getContext("2d");
+	render(ctx);
+	update(delta/1000);
+	requestAnimationFrame(setImage);
+}
+
+/**
+ * Draws the necessary blocks to the game canvas
+ */
+const update = function() {
+	if (move) {
+		currentBlock.fall();
+		move = false;
+	}
+	else {
+		currentBlock.fill();
+	}
+	for (let i = 0; i < placedBlocks.length; i++) {
+		placedBlocks[i].fill();
+	}
+}
+
+/**
+ * Creates a complete copy of an array
+ * 
+ * @param {Array} arr Array to copy
+ * @returns {Array} Copied version of arr
+ */
+const copyArr = function(arr) {
+	let f = [];
+	for (let i = 0; i < arr.length; i++) {
+		f.push(arr[i]);
+	}
+	return f;
+}
+
+
+//INITIALIZE GAME
+startInterval();
 $('#start').on('click', () => {
 	group = newGroup();
 	currentBlock = group[groupIndex];
-	//console.log(currentBlock);
 	setImage();
 });
+
+
+//EVENT HANDLERS
 document.body.addEventListener("keydown", e => {
 	if (e.key == "ArrowRight") {
 		currentBlock.move(30,0,false);
@@ -408,7 +642,6 @@ document.body.addEventListener("keydown", e => {
 		currentBlock.rotate();
 	}
 	if (e.key == " ") { 
-		//570
 		dropAudio.play();
 		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
 			if (! currentBlock.checkStop()) {
@@ -422,51 +655,3 @@ document.body.addEventListener("keydown", e => {
 		}
 	}
 })
-function background() {
-	let img = new Image();
-	img.src = 'grid.png';
-	img.onload = () => {
-	  ctx.drawImage(img,0,0,300,600);
-	}
-}
-function render(c){
-	//c.clearRect(0,0,600,600)
-	background();
-	placedBlocks.fill();
-}
-var then = 0;
-function setImage(){
-	var canvas = document.getElementById("game");
-	var ctx = canvas.getContext("2d");
-	var now = Date.now();
-	var delta = now-then;
-	render(ctx);
-	update(delta/1000);
-  
-	then = now;
-  
-	requestAnimationFrame(setImage);
-}
-addEventListener("keydown", e => {
-	
-})
-function update(modifier) {
-	if (move) {
-		currentBlock.fall();
-		move = false;
-	}
-	else {
-		currentBlock.fill();
-	}
-	for (let i = 0; i < placedBlocks.length; i++) {
-		placedBlocks[i].fill();
-	}
-}
-
-function copyArr(arr) {
-	let f = [];
-	for (let i = 0; i < arr.length; i++) {
-		f.push(arr[i]);
-	}
-	return f;
-}
