@@ -22,7 +22,8 @@ $('#edit').on('click', e => {
     eCtx.fillRect(x*30,y*30,30,30);
     for (let i in currentArr[0]) {
         if (currentArr[0][i] > y*30) {
-            currentArr[0].splice(i-1,0,'hi');
+            currentArr[0].splice(i-1,0,y*30);
+            currentArr[1].splice(i-1,0,x*30);
         }
     }
 })
