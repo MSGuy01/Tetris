@@ -5,6 +5,7 @@ class Block {
 	 * @param {number} x Starting x position of the piece
 	 */
 	constructor(y,x) {
+		this.canRotate = true;
 		this.y = y;
 		this.x = x;
 		this.rotI = 0;
@@ -39,9 +40,15 @@ class Block {
 			}
 			linesCleared += l;
 			score += scoring[l]*(level+1)
-			if (linesCleared != 0 && Math.round(linesCleared/10) > (level-1)) {
+			if (linesCleared != 0 && Math.floor(linesCleared/10) > (level-1) && level < 25) {
 				level++;
 				speed -= 20;
+			}
+			if (l == 4) {
+				tetrisAudio.play();
+			}
+			else if (l > 0) {
+				lineClearAudio.play();
 			}
 		}
 
@@ -91,6 +98,19 @@ class Block {
 				}
 			}
 			return end;
+		}
+
+		this.checkRotation = function(arr) {
+			for (let i in arr[0]) {
+				if (arr[0][i] > 570 || arr[0][i] < 0) return false;
+				for (let j in arr[1]) {
+					if (i == 0 && (arr[1][j] > 271 || arr[1][j] < 0)) return false;
+					if (placedBlocks.coords[0].includes(arr[0][i]) && placedBlocks.coords[1].includes(arr[1][j])) {
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 
 		/**
@@ -208,7 +228,12 @@ class Block {
 		 * Rotates the Block object
 		 */
 		this.rotate = function() {
-			this.changeRotation(this.y,this.x);
+			if (this.canRotate) {
+				this.setRotation(this.y,this.x);
+				if (this.checkRotation(copyArr(this.rotations[this.rotI]))) {
+					this.changeRotation(this.y,this.x);
+				}
+			}
 		}
 
 		/**
@@ -232,16 +257,24 @@ class IBlock extends Block{
 		super(y,x);
 		this.color = 'aqua';
 		//Each rotation's coordinates
-		this.rotations = [[[y,y,y,y],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x,x,x,x]]];
+		this.rotations = [[[y+30,y+30,y+30,y+30],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x+60,x+60,x+60,x+60]], [[y+60,y+60,y+60,y+60],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x+30,x+30,x+30,x+30]]];
 		//Sets up the variable containing the current coordinates of the block
 		this.coords = this.rotations[this.rotI];
 		/**
+		 * Updates the position of the block's next rotations
+		 * @param {number} y Current y position
+		 * @param {number} x Current x position
+		 */
+		this.setRotation = function(y,x) {
+			this.rotations = [[[y+30,y+30,y+30,y+30],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x+60,x+60,x+60,x+60]], [[y+60,y+60,y+60,y+60],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x+30,x+30,x+30,x+30]]];
+		}
+		/**
 		 * Switches block to the next rotation
-		 * @param {*} y Current y position
-		 * @param {*} x Current x position
+		 * @param {number} y Current y position
+		 * @param {number} x Current x position
 		 */
 		this.changeRotation = function(y,x) {
-			this.rotations = [[[y,y,y,y],[x,x+30,x+60,x+90]], [[y,y+30,y+60,y+90],[x,x,x,x]]];
+			this.setRotation(y,x);
 			this.coords = this.rotations[this.rotI];
 			this.rotI++;
 			if (this.rotI == this.rotations.length) {
@@ -262,10 +295,13 @@ class TBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'purple';
-		this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x,x,x+30,x]], [[y,y,y,y+30],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
+		this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x+30,x+60,x+30]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
 		this.coords = this.rotations[this.rotI];
+		this.setRotation = function(y,x) {
+			this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x+30,x+60,x+30]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
+		}
 		this.changeRotation = function(y,x) {
-			this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x,x,x+30,x]], [[y,y,y,y+30],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
+			this.setRotation(y,x);
 			this.coords = this.rotations[this.rotI];
 			this.rotI++;
 			if (this.rotI == this.rotations.length) {
@@ -285,10 +321,13 @@ class LBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'orange';
-		this.rotations = [[[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]], [[y,y+30,y+60,y+60],[x,x,x,x+30]], [[y,y,y,y+30],[x,x+30,x+60,x]], [[y,y,y+30,y+60],[x,x+30,x+30,x+30]]];
+		this.rotations = [[[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x+30,x+60]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x]], [[y,y,y+30,y+60],[x,x+30,x+30,x+30]]];
 		this.coords = this.rotations[this.rotI];
+		this.setRotation = function(y,x) {
+			this.rotations = [[[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x+30,x+60]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x]], [[y,y,y+30,y+60],[x,x+30,x+30,x+30]]];
+		}
 		this.changeRotation = function(y,x) {
-			this.rotations = [[[y,y+30,y+30,y+30],[x+60,x,x+30,x+60]], [[y,y+30,y+60,y+60],[x,x,x,x+30]], [[y,y,y,y+30],[x,x+30,x+60,x]], [[y,y,y+30,y+60],[x,x+30,x+30,x+30]]];
+			this.setRotation(y,x);
 			this.coords = this.rotations[this.rotI];
 			this.rotI++;
 			if (this.rotI == this.rotations.length) {
@@ -308,10 +347,13 @@ class JBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'blue';
-		this.rotations = [[[y,y+30,y+30,y+30],[x,x,x+30,x+60]], [[y,y,y+30,y+60],[x,x+30,x,x]], [[y,y,y,y+30],[x,x+30,x+60,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x,x+30]]];
+		this.rotations = [[[y,y+30,y+30,y+30],[x,x,x+30,x+60]], [[y,y,y+30,y+60],[x+30,x+60,x+30,x+30]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x,x+30]]];
 		this.coords = this.rotations[this.rotI];
-		this.changeRotation = function(y,x) {
+		this.setRotation = function(y,x) {
 			this.rotations = [[[y,y+30,y+30,y+30],[x,x,x+30,x+60]], [[y,y,y+30,y+60],[x,x+30,x,x]], [[y,y,y,y+30],[x,x+30,x+60,x+60]], [[y,y+30,y+60,y+60],[x+30,x+30,x,x+30]]];
+		}
+		this.changeRotation = function(y,x) {
+			this.setRotation(y,x);
 			this.coords = this.rotations[this.rotI];
 			this.rotI++;
 			if (this.rotI == this.rotations.length) {
@@ -346,10 +388,13 @@ class SBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'green';
-		this.rotations = [[[y,y,y+30,y+30],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x,x,x+30,x+30]]];
+		this.rotations = [[[y,y,y+30,y+30],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x+30,x+30,x+60,x+60]], [[y+30,y+30,y+60,y+60],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x,x,x+30,x+30]]];
 		this.coords = this.rotations[this.rotI];
+		this.setRotation = function(y,x) {
+			this.rotations = [[[y,y,y+30,y+30],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x+30,x+30,x+60,x+60]], [[y+30,y+30,y+60,y+60],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x,x,x+30,x+30]]];
+		}
 		this.changeRotation = function(y,x) {
-			this.rotations = [[[y,y,y+30,y+30],[x+30,x+60,x,x+30]], [[y,y+30,y+30,y+60],[x,x,x+30,x+30]]];
+			this.setRotation(y,x);
 			this.coords = this.rotations[this.rotI];
 			this.rotI++;
 			if (this.rotI == this.rotations.length) {
@@ -369,10 +414,13 @@ class ZBlock extends Block{
 	constructor(y,x) {
 		super(y,x);
 		this.color = 'red';
-		this.rotations = [[[y,y,y+30,y+30],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x]]];
+		this.rotations = [[[y,y,y+30,y+30],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+60,x+60,x+30,x+30]], [[y+30,y+30,y+60,y+60],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x+30,x,x]]];
 		this.coords = this.rotations[this.rotI];
+		this.setRotation = function(y,x) {
+			this.rotations = [[[y,y,y+30,y+30],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+60,x+60,x+30,x+30]], [[y+30,y+30,y+60,y+60],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x+30,x,x]]];
+		}
 		this.changeRotation = function(y,x) {
-			this.rotations = [[[y,y,y+30,y+30],[x,x+30,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x]]];
+			this.setRotation(y,x);
 			this.coords = this.rotations[this.rotI];
 			this.rotI++;
 			if (this.rotI == this.rotations.length) {
@@ -392,6 +440,7 @@ const scoring = [0,40,100,300,1200];
 //Audio
 const dropAudio = document.getElementById("dropAudio");
 const lineClearAudio = document.getElementById("lineClearAudio");
+const tetrisAudio = document.getElementById("tetrisAudio");
 //Up, down, left, right
 var keysDown = [false,false,false,false];
 //Master game interval
@@ -583,7 +632,7 @@ const setImage = function(){
 	var canvas = document.getElementById("game");
 	var ctx = canvas.getContext("2d");
 	render(ctx);
-	update(delta/1000);
+	update();
 	requestAnimationFrame(setImage);
 }
 
@@ -619,11 +668,11 @@ const copyArr = function(arr) {
 
 
 //INITIALIZE GAME
-startInterval();
 $('#start').on('click', () => {
 	group = newGroup();
 	currentBlock = group[groupIndex];
 	setImage();
+	startInterval();
 });
 
 
@@ -642,6 +691,7 @@ document.body.addEventListener("keydown", e => {
 		currentBlock.rotate();
 	}
 	if (e.key == " ") { 
+		currentBlock.canRotate = false;
 		dropAudio.play();
 		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
 			if (! currentBlock.checkStop()) {
