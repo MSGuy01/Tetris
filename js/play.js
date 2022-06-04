@@ -292,13 +292,31 @@ class IBlock extends Block{
 * @param {number} x Starting x position of the piece
 */
 class TBlock extends Block{
-	constructor(y,x) {
+	/*constructor(y,x) {
 		super(y,x);
 		this.color = 'purple';
 		this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x+30,x+60,x+30]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
 		this.coords = this.rotations[this.rotI];
 		this.setRotation = function(y,x) {
 			this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x+30,x+60,x+30]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
+		}
+		this.changeRotation = function(y,x) {
+			this.setRotation(y,x);
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
+		}
+		this.changeRotation(y,x);
+	}*/
+	constructor(y,x) {
+		super(y,x);
+		this.color = 'red';
+		this.rotations = [[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+30,x+60,x+90,x+0,x+30,x+0,x+30,x+60,x+90,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+30,x+60,x+0,x+30,x+60,x+90,x+30,x+90,x+0,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+0,x+60,x+0,x+30,x+60,x+90,x+60,x+90,x+0,x+30,x+60]],[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+0,x+60,x+90,x+0,x+60,x+0,x+30,x+60,x+90,x+30,x+60]]];
+		this.coords = this.rotations[this.rotI];
+		this.setRotation = function(y,x) {
+			this.rotations = [[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+30,x+60,x+90,x+0,x+30,x+0,x+30,x+60,x+90,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+30,x+60,x+0,x+30,x+60,x+90,x+30,x+90,x+0,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+0,x+60,x+0,x+30,x+60,x+90,x+60,x+90,x+0,x+30,x+60]],[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+0,x+60,x+90,x+0,x+60,x+0,x+30,x+60,x+90,x+30,x+60]]];
 		}
 		this.changeRotation = function(y,x) {
 			this.setRotation(y,x);

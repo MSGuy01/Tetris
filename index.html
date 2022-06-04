@@ -23,6 +23,17 @@
 			.hideOnHome{
 				display: none;
 			}
+			#yourBlocksContainer{
+				display: inline;
+				
+			}
+			.createdBlock{
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+			.createdBlock:hover{
+				cursor: pointer;
+			}
 		</style>
 	</head>
 	<body>
@@ -39,6 +50,8 @@
 			<h3 align="center">Or generate a new one: <button id="genCode">Generate Code</button></button></h3>
 			<h3 align="center" id="editContainer"><canvas height="120" width="120" id="edit"></canvas></h3>
 			<h3 align="center"><button id="saveBlock">Save Block</button></h3>
+			<h3 align="center">Your Blocks:</h3>
+			<h3 align="center"><div id="yourBlocksContainer"></div></h3>
 		</div>
 		<div id="gameStuff" class="hideOnHome">
 			<audio src="audio/theme.mp3" id="themeAudio"></audio>
@@ -57,8 +70,15 @@
 		<script src="js/play.js"></script>
 		<script src="js/create.js"></script>
 		<script>
-			var themeAudio = document.getElementById("themeAudio");
+			const openGame = () => {
+				
+			}
+			const openCreate = () => {
+				$('#homepageStuff').css('display','none');
+				$('#editorStuff').css('display','block');
+			}
 			$('#start').on("click", () => {
+				var themeAudio = document.getElementById("themeAudio");
 				$('#homepageStuff').css('display','none');
 				$('#gameStuff').css('display','block');
 				themeAudio.addEventListener("ended", function() {
@@ -70,7 +90,7 @@
 			$('#create').on("click", () => {
 				$('#homepageStuff').css('display','none');
 				$('#editorStuff').css('display','block');
-			})
+			});
 		</script>
 	</body>
 </html>
