@@ -25,6 +25,7 @@ const rotateArr = (arr) => {
     return finalArr;
 }
 const reverseRotations = (currentArr) => {
+    console.log(currentArr);
     let finalArr = [[false,false,false,false],[false,false,false,false],[false,false,false,false],[false,false,false,false]];
     for (let i in currentArr[0][0]) {
         //alert(currentArr[0][0][i]/30 + " , " + currentArr[0][1][i]/30);
@@ -96,7 +97,7 @@ const drawImg = (ctx,width,height,arr,square) => {
       }
 	}
 }
-$('#create').on('click', () => {
+window.onload = () => {
     let editorAudio = document.getElementById("editorAudio");
     editorAudio.addEventListener("ended", function() {
         this.currentTime = 0;
@@ -110,13 +111,22 @@ $('#create').on('click', () => {
         for (let i in data[localStorage.getItem('userCode')].blocks) {
             let newC = document.createElement("canvas");
             newC.className = "createdBlock";
+            newC.id = "createdBlock" + i;
             newC.width = 60;
             newC.height = 60;
             $('#yourBlocksContainer').append(newC);
+            $('#createdBlock' + i).attr('blockID',data[localStorage.getItem('userCode')].blockIDs[i]);
+            $('#createdBlock' + i).on('click', e => {
+                localStorage.setItem('blockID',$('#'+e.target.id).attr('blockID'))
+                let index = data[localStorage.getItem('userCode')].blockIDs.indexOf($('#'+e.target.id).attr('blockID'));
+                let blockToShow = data[localStorage.getItem('userCode')].blocks[index];
+                console.log('faewjio ' + blockToShow);
+                drawImg(eCtx,300,600,reverseRotations(blockToShow),30);
+            })
             drawImg(newC.getContext('2d'),150,300,reverseRotations(data[localStorage.getItem('userCode')].blocks[i]),15);
         }
     });
-});
+};
 $('#edit').on('click', e => {
     e.preventDefault();
     let rect = ec.getBoundingClientRect();
@@ -154,7 +164,7 @@ $('#saveBlock').on('click', e => {
             }
             fetch('update.php?w=' + JSON.stringify(data)).then(() => {
                 alert('Block successfully saved!');
-                window.location.href = 'index.html?page=edit';
+                window.location.reload();
             })
         }
     })
@@ -165,6 +175,15 @@ $('#genCode').on('click', e => {
     localStorage.setItem('userCode',newCode);
 })
 $('#submitCode').on('click', e => {
-    $('#codeLabel').html('Code: ' + $('#userCode').val());
-    localStorage.setItem('userCode',$('#userCode').val());
+    fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
+        let data = JSON.parse(text);
+        if (data[$('#userCode').val()]) {
+            $('#codeLabel').html('Code: ' + $('#userCode').val());
+            localStorage.setItem('userCode',$('#userCode').val());
+            window.location.reload();
+        }
+        else {
+            alert('That is not a valid code. Please enter a valid code or generate a new one.');
+        }
+    });
 })

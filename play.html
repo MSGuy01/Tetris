@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html> 
+	<head>
+		<title>Tetris</title>
+	 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+     	<meta http-equiv="Pragma" content="no-cache"/>
+     	<meta http-equiv="Expires" content="0"/>
+        <link rel="stylesheet" type="text/css" href="styles.css"/>
+		<style>
+			canvas{
+				background-color: gray;
+			}
+			#lose{
+				color: red;
+				font-size: 100px;
+			}
+		</style>
+	</head>
+	<body>
+		<audio src="audio/theme.mp3" id="themeAudio"></audio>
+		<audio src="audio/lose.mp3" id="loseAudio"></audio>
+		<audio src="audio/end_results.mp3" id="endResultsAudio"></audio>
+		<audio src="audio/drop.mp3" id="dropAudio"></audio>
+		<audio src="audio/line_clear.mp3" id="lineClearAudio"></audio>
+		<audio src="audio/tetris.mp3" id="tetrisAudio"></audio>
+		<audio src="audio/turn.mp3" id="turnAudio"></audio>
+		<h3 align="center" id="level">Level: 0</h3>
+		<h3 align="center" id="linesCleared">Lines Cleared: 0</h3>
+		<h3 align="center" id="score">Score: 0</h3>
+		<h3 align="center" id="gameContainer"><canvas height="600" width="300" id="game"></canvas></h3>
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<script src="js/play.js"></script>
+	</body>
+</html>

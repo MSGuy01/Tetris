@@ -5,92 +5,27 @@
 	 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
      	<meta http-equiv="Pragma" content="no-cache"/>
      	<meta http-equiv="Expires" content="0"/>
-		<style>
-			html{
-				background-color: lightgray;
-				font-family: sans-serif;
-			}
-			canvas{
-				background-color: gray;
-			}
-			#lose{
-				color: red;
-				font-size: 100px;
-			}
-			#homepageStuff{
-				display: block
-			}
-			.hideOnHome{
-				display: none;
-			}
-			#yourBlocksContainer{
-				display: inline;
-				
-			}
-			.createdBlock{
-				margin-left: 10px;
-				margin-right: 10px;
-			}
-			.createdBlock:hover{
-				cursor: pointer;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="styles.css"/>
 	</head>
 	<body>
-		<div id="homepageStuff">
-			<h3 align="center"><img id="logo" src="logo.png"></h3>
-			<h3 align="center"><button id="start">Play</button></h3>
-			<h3 align="center"><button id="create">Create</button></h3>
-		</div>
-		<div id="editorStuff" class="hideOnHome">
-			<audio src="audio/editor.mp3" id="editorAudio"></audio>
-			<h3 align="center"><img id="maker" src="maker.png"></h3>
-			<h3 align="center" style="color:red" id="codeLabel">Current Code: </h3>
-			<h3 align="center">Enter a save code if you have one: <input type="text" id="userCode"><button id="submitCode">Submit</button></button></h3>
-			<h3 align="center">Or generate a new one: <button id="genCode">Generate Code</button></button></h3>
-			<h3 align="center" id="editContainer"><canvas height="120" width="120" id="edit"></canvas></h3>
-			<h3 align="center"><button id="saveBlock">Save Block</button></h3>
-			<h3 align="center">Your Blocks:</h3>
-			<h3 align="center"><div id="yourBlocksContainer"></div></h3>
-		</div>
-		<div id="gameStuff" class="hideOnHome">
-			<audio src="audio/theme.mp3" id="themeAudio"></audio>
-			<audio src="audio/lose.mp3" id="loseAudio"></audio>
-			<audio src="audio/end_results.mp3" id="endResultsAudio"></audio>
-			<audio src="audio/drop.mp3" id="dropAudio"></audio>
-			<audio src="audio/line_clear.mp3" id="lineClearAudio"></audio>
-			<audio src="audio/tetris.mp3" id="tetrisAudio"></audio>
-			<audio src="audio/turn.mp3" id="turnAudio"></audio>
-			<h3 align="center" id="level">Level: 0</h3>
-			<h3 align="center" id="linesCleared">Lines Cleared: 0</h3>
-			<h3 align="center" id="score">Score: 0</h3>
-			<h3 align="center" id="gameContainer"><canvas height="600" width="300" id="game"></canvas></h3>
-		</div>
+		<h3 align="center"><img id="logo" src="logo.png"></h3>
+		<h3 align="center"><button id="start">Play</button></h3>
+		<h3 align="center"><button id="create">Create</button></h3>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-		<script src="js/play.js"></script>
-		<script src="js/create.js"></script>
 		<script>
-			const openGame = () => {
-				
+			var get = window.location.href.split("?page=")[1];
+			switch (get) {
+				case "edit":
+				window.location.hreef = "create.html"
+					break;
+				case "play":
+					window.location.href = "play.html"
+					break;
+				default:
+					break;
 			}
-			const openCreate = () => {
-				$('#homepageStuff').css('display','none');
-				$('#editorStuff').css('display','block');
-			}
-			$('#start').on("click", () => {
-				var themeAudio = document.getElementById("themeAudio");
-				$('#homepageStuff').css('display','none');
-				$('#gameStuff').css('display','block');
-				themeAudio.addEventListener("ended", function() {
-				    this.currentTime = 0;
-				    this.play();
-				}, false);
-				themeAudio.play();
-			});
-			$('#create').on("click", () => {
-				$('#homepageStuff').css('display','none');
-				$('#editorStuff').css('display','block');
-			});
+			$('#start').on("click", () => {window.location.href = "play.html"});
+			$('#create').on("click", () => {window.location.href = "create.html"});
 		</script>
 	</body>
 </html>

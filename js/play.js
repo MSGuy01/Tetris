@@ -39,7 +39,7 @@ class Block {
 				}
 			}
 			linesCleared += l;
-			score += scoring[l]*(level+1)
+			score += scoring[l]*level;
 			if (linesCleared != 0 && Math.floor(linesCleared/10) > (level-1) && level < 25) {
 				level++;
 				speed -= 20;
@@ -292,7 +292,7 @@ class IBlock extends Block{
 * @param {number} x Starting x position of the piece
 */
 class TBlock extends Block{
-	/*constructor(y,x) {
+	constructor(y,x) {
 		super(y,x);
 		this.color = 'purple';
 		this.rotations = [[[y,y+30,y+30,y+30],[x+30,x,x+30,x+60]], [[y,y+30,y+30,y+60],[x+30,x+30,x+60,x+30]], [[y+30,y+30,y+30,y+60],[x,x+30,x+60,x+30]], [[y,y+30,y+30,y+60],[x+30,x,x+30,x+30]]];
@@ -309,8 +309,8 @@ class TBlock extends Block{
 			}
 		}
 		this.changeRotation(y,x);
-	}*/
-	constructor(y,x) {
+	}
+	/*constructor(y,x) {
 		super(y,x);
 		this.color = 'red';
 		this.rotations = [[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+30,x+60,x+90,x+0,x+30,x+0,x+30,x+60,x+90,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+30,x+60,x+0,x+30,x+60,x+90,x+30,x+90,x+0,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+0,x+60,x+0,x+30,x+60,x+90,x+60,x+90,x+0,x+30,x+60]],[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+0,x+60,x+90,x+0,x+60,x+0,x+30,x+60,x+90,x+30,x+60]]];
@@ -327,7 +327,7 @@ class TBlock extends Block{
 			}
 		}
 		this.changeRotation(y,x);
-	}
+	}*/
 }
 
 /**
@@ -454,7 +454,7 @@ const ctx = c.getContext("2d");
 //How many different types of tetris blocks there are available
 const numBlocks = 7;
 //How much each number of lines should be multiplied by when scoring
-const scoring = [0,40,100,300,1200];
+const scoring = [0,100,300,500,800];
 //Audio
 const dropAudio = document.getElementById("dropAudio");
 const lineClearAudio = document.getElementById("lineClearAudio");
@@ -686,12 +686,12 @@ const copyArr = function(arr) {
 
 
 //INITIALIZE GAME
-$('#start').on('click', () => {
+window.onload = () => {
 	group = newGroup();
 	currentBlock = group[groupIndex];
 	setImage();
 	startInterval();
-});
+};
 
 
 //EVENT HANDLERS
@@ -703,6 +703,7 @@ document.body.addEventListener("keydown", e => {
 		currentBlock.move(-30,0,false);
 	}
 	if (e.key == "ArrowDown") {
+		score += 1;
 		currentBlock.move(0,30,false);
 	}
 	if (e.key == "ArrowUp") {
@@ -711,13 +712,16 @@ document.body.addEventListener("keydown", e => {
 	if (e.key == " ") { 
 		currentBlock.canRotate = false;
 		dropAudio.play();
+		let toScore = 0;
 		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
 			if (! currentBlock.checkStop()) {
+				toScore += 2;
 				for (let i = 0; i < currentBlock.coords[0].length; i++) {
 					currentBlock.coords[0][i] += 30;
 				}
 			}
 			else {
+				score += toScore;
 				break;
 			}
 		}

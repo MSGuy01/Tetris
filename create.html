@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html> 
+	<head>
+		<title>Tetris</title>
+	 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+     	<meta http-equiv="Pragma" content="no-cache"/>
+     	<meta http-equiv="Expires" content="0"/>
+        <link rel="stylesheet" type="text/css" href="styles.css"/>
+		<style>
+			#yourBlocksContainer{
+				display: inline;
+				
+			}
+			.createdBlock{
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+			.createdBlock:hover{
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<audio src="audio/editor.mp3" id="editorAudio"></audio>
+		<h3 align="center"><a href="index.html"><img id="maker" src="maker.png"></a></h3>
+		<h3 align="center" style="color:red" id="codeLabel">Current Code: </h3>
+		<h3 align="center">Enter a save code if you have one: <input type="text" id="userCode"><button id="submitCode">Submit</button></button></h3>
+		<h3 align="center">Or generate a new one: <button id="genCode">Generate Code</button></button></h3>
+		<h3 align="center" id="editContainer"><canvas height="120" width="120" id="edit"></canvas></h3>
+		<h3 align="center"><button id="saveBlock">Save Block</button><button id="delBlock">Delete Block</button><button id="newBlock">New Block</button></h3>
+		<h3 align="center">Your Blocks:</h3>
+		<h3 align="center"><div id="yourBlocksContainer"></div></h3>
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<script src="js/create.js"></script>
+	</body>
+</html>
