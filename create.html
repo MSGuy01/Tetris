@@ -23,12 +23,13 @@
 	<body>
 		<audio src="audio/editor.mp3" id="editorAudio"></audio>
 		<h3 align="center"><a href="index.html"><img id="maker" src="maker.png"></a></h3>
-		<h3 align="center" style="color:red" id="codeLabel">Current Code: </h3>
-		<h3 align="center">Enter a save code if you have one: <input type="text" id="userCode"><button id="submitCode">Submit</button></button></h3>
+		<h3 align="center" style="color:red" id="codeLabel">Tetris Collection Code: </h3>
+		<h3 align="center">Enter a Tetris Collection Code if you have one: <input type="text" id="userCode"><button id="submitCode">Submit</button></button></h3>
 		<h3 align="center">Or generate a new one: <button id="genCode">Generate Code</button></button></h3>
+        <h3 align="center" id="currentBlockLabel">Current Block: [NEW BLOCK]</h3>
 		<h3 align="center" id="editContainer"><canvas height="120" width="120" id="edit"></canvas></h3>
 		<h3 align="center"><button id="saveBlock">Save Block</button><button id="delBlock">Delete Block</button><button id="newBlock">New Block</button></h3>
-		<h3 align="center">Your Blocks:</h3>
+		<h3 align="center">Your Blocks: <a id="share" target="_blank" href="">Share Your Blocks</a></h3>
 		<h3 align="center"><div id="yourBlocksContainer"></div></h3>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 		<script src="js/create.js"></script>

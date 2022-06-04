@@ -17,18 +17,29 @@
 		</style>
 	</head>
 	<body>
-		<audio src="audio/theme.mp3" id="themeAudio"></audio>
-		<audio src="audio/lose.mp3" id="loseAudio"></audio>
-		<audio src="audio/end_results.mp3" id="endResultsAudio"></audio>
-		<audio src="audio/drop.mp3" id="dropAudio"></audio>
-		<audio src="audio/line_clear.mp3" id="lineClearAudio"></audio>
-		<audio src="audio/tetris.mp3" id="tetrisAudio"></audio>
-		<audio src="audio/turn.mp3" id="turnAudio"></audio>
-		<h3 align="center" id="level">Level: 0</h3>
-		<h3 align="center" id="linesCleared">Lines Cleared: 0</h3>
-		<h3 align="center" id="score">Score: 0</h3>
-		<h3 align="center" id="gameContainer"><canvas height="600" width="300" id="game"></canvas></h3>
-		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <div id="settings">
+            <h1 align="center">Settings</h1>
+            <h3 align="center">Board Customization:</h3>
+            <h3 align="center">Blocks to Include:</h3>
+            <h3 align="center">Level:</h3>
+            <h3 align="center">Button Mapping:</h3>
+            <h3 align="center">Audio:</h3>
+            <h3 align="center"><button id="startGame">Start Game!</button></h3>
+        </div>
+        <div id="game" style="display:none">
+            <audio src="audio/theme.mp3" id="themeAudio"></audio>
+            <audio src="audio/lose.mp3" id="loseAudio"></audio>
+            <audio src="audio/end_results.mp3" id="endResultsAudio"></audio>
+            <audio src="audio/drop.mp3" id="dropAudio"></audio>
+            <audio src="audio/line_clear.mp3" id="lineClearAudio"></audio>
+            <audio src="audio/tetris.mp3" id="tetrisAudio"></audio>
+            <audio src="audio/turn.mp3" id="turnAudio"></audio>
+            <h3 align="center" id="level">Level: 0</h3>
+            <h3 align="center" id="linesCleared">Lines Cleared: 0</h3>
+            <h3 align="center" id="score">Score: 0</h3>
+            <h3 align="center" id="gameContainer"><canvas height="600" width="300" id="game"></canvas></h3>
+		</div>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 		<script src="js/play.js"></script>
 	</body>
 </html>

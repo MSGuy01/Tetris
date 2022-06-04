@@ -2,3 +2,9 @@ html{
     background-color: lightgray;
     font-family: sans-serif;
 }
+footer{
+    position: absolute;
+    top: auto;
+    bottom: 0px;
+    text-align: center;
+}

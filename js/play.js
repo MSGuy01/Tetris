@@ -686,12 +686,12 @@ const copyArr = function(arr) {
 
 
 //INITIALIZE GAME
-window.onload = () => {
+$('#startGame').on('click', () => {
 	group = newGroup();
 	currentBlock = group[groupIndex];
 	setImage();
 	startInterval();
-};
+});
 
 
 //EVENT HANDLERS

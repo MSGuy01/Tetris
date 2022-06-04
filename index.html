@@ -11,8 +11,14 @@
 		<h3 align="center"><img id="logo" src="logo.png"></h3>
 		<h3 align="center"><button id="start">Play</button></h3>
 		<h3 align="center"><button id="create">Create</button></h3>
+		<footer style="display:none">©2022 Matthew Bevins/Exist Games, Inc. All rights reserved.</footer>
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 		<script>
+			window.onload = () => {
+				let h = document.getElementsByTagName("footer")[0].innerHTML;
+				document.getElementsByTagName("footer")[0].innerHTML = h.substring(1,h.length);
+				document.getElementsByTagName("footer")[0].style.display = "block";
+			}
 			var get = window.location.href.split("?page=")[1];
 			switch (get) {
 				case "edit":
