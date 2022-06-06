@@ -45,20 +45,20 @@
             <h2 align="center"><div id="yourBlocksContainer"></div></h2>
             <h2 align="center">Level:</h2>
             <h3 align="center">
-                <select></select>
+                <select id="levelSelect"></select>
             </h3>
             <h2 align="center">Button Mapping:</h2>
-            <h3 align="center">Rotate Block: <button id="rotateMap">ArrowUp</button></h3>
-            <h3 align="center">Move Block Left: <button id="leftMap">ArrowLeft</button></h3>
-            <h3 align="center">Move Block Right: <button id="rightMap">ArrowRight</button></h3>
-            <h3 align="center">Soft Drop: <button id="softMap">ArrowDown</button></h3>
-            <h3 align="center">Hard Drop: <button id="hardMap">[SPACEBAR]</button></h3>
+            <h3 align="center">Rotate Block: <button class="mapButton" id="m0">ArrowUp</button></h3>
+            <h3 align="center">Move Block Left: <button class="mapButton" id="m1">ArrowLeft</button></h3>
+            <h3 align="center">Move Block Right: <button class="mapButton" id="m2">ArrowRight</button></h3>
+            <h3 align="center">Soft Drop: <button class="mapButton" id="m3">ArrowDown</button></h3>
+            <h3 align="center">Hard Drop: <button class="mapButton" id="m4">[SPACEBAR]</button></h3>
             <h2 align="center">Audio:</h2>
             <h3 align="center">Music: <button id="musicToggle">On</button></h3>
             <h3 align="center">Sound FX: <button id="fxToggle">On</button></h3>
             <h2 align="center"><button id="startGame">Start Game!</button></h2>
         </div>
-        <div id="game" style="display:none">
+        <div id="gameStuff" style="display:none">
             <audio src="audio/theme.mp3" id="themeAudio"></audio>
             <audio src="audio/lose.mp3" id="loseAudio"></audio>
             <audio src="audio/end_results.mp3" id="endResultsAudio"></audio>

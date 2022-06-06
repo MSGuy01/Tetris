@@ -448,6 +448,51 @@ class ZBlock extends Block{
 		this.changeRotation(y,x);
 	}
 }
+
+class CustomBlock extends Block{
+	constructor(y,x,data) {
+		super(y,x);
+		this.color = 'red';
+		this.rotations = [[[],[]],[[],[]],[[],[]],[[],[]]];
+		for (let i in data) {
+			for (let j in data[i]) {
+				for (let k in data[i][j]) {
+					if (k == 0) {
+						this.rotations[i][j].push(y+data[i][j][k]);
+					}
+					else {
+						this.rotations[i][j].push(x+data[i][j][k]);
+					}
+				}
+			}
+		}
+		this.setRotation = function(y,x) {
+			this.rotations = [[[],[]],[[],[]],[[],[]],[[],[]]];
+			for (let i in data) {
+				for (let j in data[i]) {
+					for (let k in data[i][j]) {
+						if (k == 0) {
+							this.rotations[i][j].push(y+data[i][j][k]);
+						}
+						else {
+							this.rotations[i][j].push(x+data[i][j][k]);
+						}
+					}
+				}
+			}
+		}
+		this.changeRotation = function(y,x) {
+			this.setRotation(y,x);
+			this.coords = this.rotations[this.rotI];
+			this.rotI++;
+			if (this.rotI == this.rotations.length) {
+				this.rotI = 0;
+			}
+		}
+		this.changeRotation(y,x);
+	}
+}
+
 //Define the canvas
 const c = document.getElementById("game");
 const ctx = c.getContext("2d");
@@ -467,7 +512,7 @@ var gameInterval;
 var newBlock = false;
 //Game stats
 var score = 0;
-var level = 1;
+//var level = 1;
 var speed = 500;
 var linesCleared = 0;
 var gameOver = false;
@@ -687,6 +732,18 @@ const copyArr = function(arr) {
 
 //INITIALIZE GAME
 $('#startGame').on('click', () => {
+	level = $('#levelSelect').val();
+	for (let i = 1; i < level; i++) {
+		speed -= 20;
+	}
+	fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
+        let data = JSON.parse(text);
+		for (let i in data[localStorage.getItem('userCode')].blocks) {
+			if ()
+		}
+	});
+	$('#settings').hide();
+	$('#gameStuff').show();
 	group = newGroup();
 	currentBlock = group[groupIndex];
 	setImage();

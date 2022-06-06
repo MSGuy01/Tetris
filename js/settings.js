@@ -21,7 +21,60 @@ const reverseRotations = (currentArr) => {
     }
     return finalArr;
 }
+var mapsArr = ["ArrowUp","ArrowLeft","ArrowRight","ArrowDown"," "]
+var music = true;
+var fx = true;
+var level = 1;
 window.onload = () => {
+    let maps = document.getElementsByClassName("mapButton");
+    var canMap = false;
+    for (let i = 0; i < maps.length; i++) {
+        maps[i].addEventListener("click", e => {
+            document.getElementById(e.target.id).innerHTML = 'Awaiting Input...';
+            canMap = parseInt(e.target.id.substr(1,1));
+            window.setTimeout(() => {
+                canMap = false;
+                if (mapsArr[e.target.id.substr(1,1)] != ' ') {
+                    document.getElementById(e.target.id).innerHTML = mapsArr[e.target.id.substr(1,1)];
+                }
+                else {
+                    document.getElementById(e.target.id).innerHTML = '[SPACEBAR]';
+                }
+            }, 5000);
+        });
+    }
+    $('#musicToggle').on('click',()=>{
+        if (music) {
+            music = false;
+            $('#musicToggle').html('Off');
+        }
+        else {
+            music = true;
+            $('#musicToggle').html('On');
+        }
+    })
+    $('#fxToggle').on('click',()=>{
+        if (fx) {
+            fx = false;
+            $('#fxToggle').html('Off');
+        }
+        else {
+            fx = true;
+            $('#fxToggle').html('On');
+        }
+    })
+    document.body.addEventListener("keydown", e => {
+        e.preventDefault();
+        if (canMap == 0 || canMap != false) {
+            mapsArr[canMap] = e.key;
+            if (e.key != ' ') {
+                document.getElementById('m'+canMap).innerHTML = e.key;
+            }
+            else {
+                document.getElementById('m'+canMap).innerHTML = '[SPACEBAR]';
+            }
+        }
+    })
     for (let i = 1; i < 26; i++) {
         let n = document.createElement("option")
         n.value = i;
