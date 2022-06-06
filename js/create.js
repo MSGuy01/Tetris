@@ -88,8 +88,9 @@ const createRotations = (currentArr) => {
 
 var ec = document.getElementById("edit");
 var eCtx = ec.getContext("2d");
+var fillStyle = 'red';
 var currentArr = [[false,false,false,false],[false,false,false,false],[false,false,false,false],[false,false,false,false]];
-const drawImg = (ctx,width,height,arr,square) => {
+const drawImg = (ctx,width,height,arr,square,color) => {
     let img = new Image();
 	img.src = 'grid.png';
     console.log(arr);
@@ -98,7 +99,7 @@ const drawImg = (ctx,width,height,arr,square) => {
       for (let i in arr) {
         for (let j in arr[i]) {
             if (arr[i][j]) {
-                ctx.fillStyle = 'red';
+                ctx.fillStyle = color;
                 ctx.fillRect(j*square,i*square,square,square);
             }
         }
@@ -119,7 +120,7 @@ window.onload = () => {
     }, false);
     editorAudio.play();
     $('#codeLabel').html('Tetris Collection Code: ' + localStorage.getItem('userCode'));
-    drawImg(eCtx,300,600,currentArr,30);
+    drawImg(eCtx,300,600,currentArr,30,fillStyle);
     fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
         let data = JSON.parse(text);
         for (let i in data[localStorage.getItem('userCode')].blocks) {
@@ -138,9 +139,9 @@ window.onload = () => {
                 let blockToShow = data[localStorage.getItem('userCode')].blocks[index];
                 console.log('faewjio ' + blockToShow);
                 currentArr = reverseRotations(blockToShow);
-                drawImg(eCtx,300,600,currentArr,30);
+                drawImg(eCtx,300,600,currentArr,30,fillStyle);
             })
-            drawImg(newC.getContext('2d'),150,300,reverseRotations(data[localStorage.getItem('userCode')].blocks[i]),15);
+            drawImg(newC.getContext('2d'),150,300,reverseRotations(data[localStorage.getItem('userCode')].blocks[i]),15,'#'+data[localStorage.getItem('userCode')].colors[i]);
         }
     });
 };
@@ -151,19 +152,23 @@ $('#edit').on('click', e => {
     let y = Math.floor((e.clientY-rect.top)/30)
     if (currentArr[y][x] == false) {
         currentArr[y][x] = true;
-        eCtx.fillStyle = 'red';
+        eCtx.fillStyle = fillStyle;
         eCtx.fillRect(x*30,y*30,30,30);
     }
     else {
         currentArr[y][x] = false;
-        drawImg(eCtx,300,600,currentArr,30);
+        drawImg(eCtx,300,600,currentArr,30,fillStyle);
     }
 })
 $('#newBlock').on('click', e => {
     currentArr = removeBlock(currentArr);
     localStorage.setItem('blockID','');
-    drawImg(eCtx,300,600,currentArr,30);
+    drawImg(eCtx,300,600,currentArr,30,fillStyle);
     $('#delBlock').hide();
+})
+$('#submitColor').on('click', () => {
+    fillStyle = $('#color').val();
+    drawImg(eCtx,300,600,currentArr,30,fillStyle);
 })
 $('#saveBlock').on('click', e => {
     fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
@@ -176,15 +181,18 @@ $('#saveBlock').on('click', e => {
             let newBlockId = Math.floor(Math.random() * 899999 + 100000);
             if (!data[localStorage.getItem('userCode')]) {
                 let newObj = {
-                    "blockIDs": [newBlockId],
+                    "colors": [fillStyle.toString().substring(1,fillStyle.length)],
+                    "blockIDs": [String(newBlockId)],
                     "blocks": [rotationsArr]
                 }
                 data[localStorage.getItem('userCode')] = newObj;
             }
             else {
                 if (localStorage.getItem('blockID') == '') {
+                    //alert(fillStyle.toString().substring(1,fillStyle.length));
                     data[localStorage.getItem('userCode')].blocks.push(rotationsArr);
                     data[localStorage.getItem('userCode')].blockIDs.push(String(newBlockId));
+                    data[localStorage.getItem('userCode')].colors.push(fillStyle.toString().substring(1,fillStyle.length));
                 }
                 else {
                     let index = data[localStorage.getItem('userCode')].blockIDs.indexOf(localStorage.getItem('blockID'));

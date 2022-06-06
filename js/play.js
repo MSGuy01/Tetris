@@ -432,9 +432,9 @@ class ZBlock extends Block{
 }
 
 class CustomBlock extends Block{
-	constructor(y,x,data) {
+	constructor(y,x,data,color) {
 		super(y,x);
-		this.color = 'red';
+		this.color = color;
 		this.rotations = [[[],[]],[[],[]],[[],[]],[[],[]]];
 		for (let i in data) {
 			for (let j in data[i]) {
@@ -509,8 +509,9 @@ var groupIndex = 0;
 var group;
 //Stores the block currently being played
 var currentBlock;
-//
+
 var allData = [];
+var dataa = [];
 //Initialize the Block object storing all of the placed blocks
 var placedBlocks = new Block;
 placedBlocks.coords = [
@@ -591,7 +592,7 @@ const newGroup = function() {
 				arr.push(new ZBlock(0,90));
 				break;
 			default:
-				arr.push(new CustomBlock(0,0,allData[choice-7]));
+				arr.push(new CustomBlock(0,0,allData[choice-7]),dataa[choice-7]);
 				break;
 		}
 	}
@@ -736,12 +737,15 @@ $('#startGame').on('click', () => {
 	}
 	fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
         let data = JSON.parse(text);
-		for (let i in data[localStorage.getItem('userCode')].blockIDs) {
-			let id = data[localStorage.getItem('userCode')].blockIDs[i];
-			let isChecked = document.getElementById(id).checked;
-			if (isChecked) {
-				numBlocks++;
-				allData.push(data[localStorage.getItem('userCode')].blocks[i]);
+		if (typeof data[localStorage.getItem('userCode')] !== 'undefined') {
+			for (let i in data[localStorage.getItem('userCode')].blockIDs) {
+				let id = data[localStorage.getItem('userCode')].blockIDs[i];
+				let isChecked = document.getElementById(id).checked;
+				if (isChecked) {
+					numBlocks++;
+					dataa.push('#'+data[localStorage.getItem('userCode')].colors[i]);
+					allData.push(data[localStorage.getItem('userCode')].blocks[i]);
+				}
 			}
 		}
 		$('#settings').hide();
