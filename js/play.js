@@ -310,24 +310,6 @@ class TBlock extends Block{
 		}
 		this.changeRotation(y,x);
 	}
-	/*constructor(y,x) {
-		super(y,x);
-		this.color = 'red';
-		this.rotations = [[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+30,x+60,x+90,x+0,x+30,x+0,x+30,x+60,x+90,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+30,x+60,x+0,x+30,x+60,x+90,x+30,x+90,x+0,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+0,x+60,x+0,x+30,x+60,x+90,x+60,x+90,x+0,x+30,x+60]],[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+0,x+60,x+90,x+0,x+60,x+0,x+30,x+60,x+90,x+30,x+60]]];
-		this.coords = this.rotations[this.rotI];
-		this.setRotation = function(y,x) {
-			this.rotations = [[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+30,x+60,x+90,x+0,x+30,x+0,x+30,x+60,x+90,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+30,x+60,x+0,x+30,x+60,x+90,x+30,x+90,x+0,x+30,x+90]],[[y+0,y+0,y+30,y+30,y+30,y+30,y+60,y+60,y+90,y+90,y+90],[x+0,x+60,x+0,x+30,x+60,x+90,x+60,x+90,x+0,x+30,x+60]],[[y+0,y+0,y+0,y+30,y+30,y+60,y+60,y+60,y+60,y+90,y+90],[x+0,x+60,x+90,x+0,x+60,x+0,x+30,x+60,x+90,x+30,x+60]]];
-		}
-		this.changeRotation = function(y,x) {
-			this.setRotation(y,x);
-			this.coords = this.rotations[this.rotI];
-			this.rotI++;
-			if (this.rotI == this.rotations.length) {
-				this.rotI = 0;
-			}
-		}
-		this.changeRotation(y,x);
-	}*/
 }
 
 /**
@@ -457,7 +439,7 @@ class CustomBlock extends Block{
 		for (let i in data) {
 			for (let j in data[i]) {
 				for (let k in data[i][j]) {
-					if (k == 0) {
+					if (j == 0) {
 						this.rotations[i][j].push(y+data[i][j][k]);
 					}
 					else {
@@ -466,12 +448,13 @@ class CustomBlock extends Block{
 				}
 			}
 		}
+		this.coords = this.rotations[this.rotI];
 		this.setRotation = function(y,x) {
 			this.rotations = [[[],[]],[[],[]],[[],[]],[[],[]]];
 			for (let i in data) {
 				for (let j in data[i]) {
 					for (let k in data[i][j]) {
-						if (k == 0) {
+						if (j == 0) {
 							this.rotations[i][j].push(y+data[i][j][k]);
 						}
 						else {
@@ -497,7 +480,7 @@ class CustomBlock extends Block{
 const c = document.getElementById("game");
 const ctx = c.getContext("2d");
 //How many different types of tetris blocks there are available
-const numBlocks = 7;
+var numBlocks = 7;
 //How much each number of lines should be multiplied by when scoring
 const scoring = [0,100,300,500,800];
 //Audio
@@ -524,6 +507,8 @@ var groupIndex = 0;
 var group;
 //Stores the block currently being played
 var currentBlock;
+//
+var allData = [];
 //Initialize the Block object storing all of the placed blocks
 var placedBlocks = new Block;
 placedBlocks.coords = [
@@ -602,6 +587,9 @@ const newGroup = function() {
 				break;
 			case 6:
 				arr.push(new ZBlock(0,90));
+				break;
+			default:
+				arr.push(new CustomBlock(0,0,allData[choice-7]));
 				break;
 		}
 	}
@@ -738,16 +726,21 @@ $('#startGame').on('click', () => {
 	}
 	fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
         let data = JSON.parse(text);
-		for (let i in data[localStorage.getItem('userCode')].blocks) {
-			if ()
+		for (let i in data[localStorage.getItem('userCode')].blockIDs) {
+			let id = data[localStorage.getItem('userCode')].blockIDs[i];
+			let isChecked = document.getElementById(id).checked;
+			if (isChecked) {
+				numBlocks++;
+				allData.push(data[localStorage.getItem('userCode')].blocks[i]);
+			}
 		}
+		$('#settings').hide();
+		$('#gameStuff').show();
+		group = newGroup();
+		currentBlock = group[groupIndex];
+		setImage();
+		startInterval();
 	});
-	$('#settings').hide();
-	$('#gameStuff').show();
-	group = newGroup();
-	currentBlock = group[groupIndex];
-	setImage();
-	startInterval();
 });
 
 

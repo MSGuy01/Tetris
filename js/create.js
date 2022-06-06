@@ -184,7 +184,7 @@ $('#saveBlock').on('click', e => {
             else {
                 if (localStorage.getItem('blockID') == '') {
                     data[localStorage.getItem('userCode')].blocks.push(rotationsArr);
-                    data[localStorage.getItem('userCode')].blockIDs.push(newBlockId);
+                    data[localStorage.getItem('userCode')].blockIDs.push(String(newBlockId));
                 }
                 else {
                     let index = data[localStorage.getItem('userCode')].blockIDs.indexOf(localStorage.getItem('blockID'));
@@ -202,6 +202,7 @@ $('#delBlock').on('click', e => {
         let data = JSON.parse(text);
         let index = data[localStorage.getItem('userCode')].blockIDs.indexOf(localStorage.getItem('blockID'));
         data[localStorage.getItem('userCode')].blocks.splice(index,1);
+        data[localStorage.getItem('userCode')].blockIDs.splice(index,1);
         currentArr = removeBlock(currentArr);
         localStorage.setItem('blockID','');
         fetch('update.php?w=' + JSON.stringify(data)).then(() => {
