@@ -749,10 +749,10 @@ $('#startGame').on('click', () => {
 		let themeAudio = document.getElementById('themeAudio');
 		if (music) {
 			themeAudio.play();
-			themeAudio.addEventListener("ended", e => {
+			themeAudio.addEventListener("ended", function() {
 				this.currentTime = 0;
 				this.play();
-			})
+			}, false);
 		}
 		group = newGroup();
 		currentBlock = group[groupIndex];
