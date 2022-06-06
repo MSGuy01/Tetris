@@ -159,6 +159,12 @@ $('#edit').on('click', e => {
         drawImg(eCtx,300,600,currentArr,30);
     }
 })
+$('#newBlock').on('click', e => {
+    currentArr = removeBlock(currentArr);
+    localStorage.setItem('blockID','');
+    drawImg(eCtx,300,600,currentArr,30);
+    $('#delBlock').hide();
+})
 $('#saveBlock').on('click', e => {
     fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
         let data = JSON.parse(text);

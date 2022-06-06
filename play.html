@@ -14,17 +14,49 @@
 				color: red;
 				font-size: 100px;
 			}
+			#yourBlocksContainer{
+				display: inline;
+			}
+			.createdBlock{
+				margin-left: 10px;
+				margin-right: 10px;
+			}
+			.createdBlock:hover{
+				cursor: pointer;
+			}
 		</style>
 	</head>
 	<body>
         <div id="settings">
             <h1 align="center">Settings</h1>
-            <h3 align="center">Board Customization:</h3>
-            <h3 align="center">Blocks to Include:</h3>
-            <h3 align="center">Level:</h3>
-            <h3 align="center">Button Mapping:</h3>
-            <h3 align="center">Audio:</h3>
-            <h3 align="center"><button id="startGame">Start Game!</button></h3>
+            <h2 align="center">Board Customization:</h2>
+            <h3 align="center">
+                <select>
+                    <option value="default">Default</option>
+                    <option value="custom">Custom:</option>
+                </select>
+            </h3>
+            <div id="boardOptions" style="display:none">
+            
+            </div>
+            <h2 align="center">Blocks to Include:</h2>
+            <h3 align="center" style="color:red" id="codeLabel">Tetris Collection Code: </h3>
+		    <h3 align="center">Enter a Tetris Collection Code: <input type="text" id="userCode"><button id="submitCode">Submit</button></button></h3>
+            <h2 align="center"><div id="yourBlocksContainer"></div></h2>
+            <h2 align="center">Level:</h2>
+            <h3 align="center">
+                <select></select>
+            </h3>
+            <h2 align="center">Button Mapping:</h2>
+            <h3 align="center">Rotate Block: <button id="rotateMap">ArrowUp</button></h3>
+            <h3 align="center">Move Block Left: <button id="leftMap">ArrowLeft</button></h3>
+            <h3 align="center">Move Block Right: <button id="rightMap">ArrowRight</button></h3>
+            <h3 align="center">Soft Drop: <button id="softMap">ArrowDown</button></h3>
+            <h3 align="center">Hard Drop: <button id="hardMap">[SPACEBAR]</button></h3>
+            <h2 align="center">Audio:</h2>
+            <h3 align="center">Music: <button id="musicToggle">On</button></h3>
+            <h3 align="center">Sound FX: <button id="fxToggle">On</button></h3>
+            <h2 align="center"><button id="startGame">Start Game!</button></h2>
         </div>
         <div id="game" style="display:none">
             <audio src="audio/theme.mp3" id="themeAudio"></audio>
@@ -40,6 +72,7 @@
             <h3 align="center" id="gameContainer"><canvas height="600" width="300" id="game"></canvas></h3>
 		</div>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="js/settings.js"></script>
 		<script src="js/play.js"></script>
 	</body>
 </html>
