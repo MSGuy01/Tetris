@@ -3,7 +3,7 @@ const drawImg = (ctx,width,height,arr,square) => {
 	img.src = 'grid.png';
     console.log(arr);
 	img.onload = () => {
-	  ctx.drawImage(img,0,0,width,height);
+	  ctx.drawImage(img,0,0,width*4,height*4);
       for (let i in arr) {
         for (let j in arr[i]) {
             if (arr[i][j]) {
@@ -25,7 +25,11 @@ var mapsArr = ["ArrowUp","ArrowLeft","ArrowRight","ArrowDown"," "]
 var music = true;
 var fx = true;
 var level = 1;
+var height = 600;
+var width = 300;
 window.onload = () => {
+    $('#customSize').hide();
+    $('#codeLabel').html('Tetris Collection Code: ' + localStorage.getItem('userCode'));
     let maps = document.getElementsByClassName("mapButton");
     var canMap = false;
     for (let i = 0; i < maps.length; i++) {
@@ -43,6 +47,15 @@ window.onload = () => {
             }, 5000);
         });
     }
+    $('#customSelect').on('click',() => {
+        let val = document.getElementById("customSelect").value;
+        if (val == 'custom') {
+            $('#customSize').show();
+        }
+        else {
+            $('#customSize').hide();
+        }
+    });
     $('#musicToggle').on('click',()=>{
         if (music) {
             music = false;
@@ -62,6 +75,19 @@ window.onload = () => {
             fx = true;
             $('#fxToggle').html('On');
         }
+    })
+    $('#submitCode').on('click', e => {
+        fetch('savedBlocks.json?nocache=' + new Date().getTime()).then(response => response.text()).then(text => {
+            let data = JSON.parse(text);
+            if (data[$('#userCode').val()]) {
+                $('#codeLabel').html('Tetris Collection Code: ' + $('#userCode').val());
+                localStorage.setItem('userCode',$('#userCode').val());
+                window.location.reload();
+            }
+            else {
+                alert('That is not a valid code. Please enter a valid code or generate a new one.');
+            }
+        });
     })
     document.body.addEventListener("keydown", e => {
         e.preventDefault();

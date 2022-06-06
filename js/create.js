@@ -94,7 +94,7 @@ const drawImg = (ctx,width,height,arr,square) => {
 	img.src = 'grid.png';
     console.log(arr);
 	img.onload = () => {
-	  ctx.drawImage(img,0,0,width,height);
+	  ctx.drawImage(img,0,0,width*4,height*4);
       for (let i in arr) {
         for (let j in arr[i]) {
             if (arr[i][j]) {

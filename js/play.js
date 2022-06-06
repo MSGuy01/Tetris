@@ -17,9 +17,9 @@ class Block {
 			window.clearInterval(gameInterval);
 			startInterval();
 			let l = 0;
-			for (let i = 570; i > 0; i-=30) {
+			for (let i = bottom; i > 0; i-=30) {
 				let o = getOccurrence(placedBlocks.coords[0],i);
-				if (o == 10) {
+				if (o == width/30) {
 					l++;
 					let gv = getVals(placedBlocks.coords[0],i);
 					for (let j in gv) {
@@ -44,10 +44,10 @@ class Block {
 				level++;
 				speed -= 20;
 			}
-			if (l == 4) {
+			if (l == 4 && fx) {
 				tetrisAudio.play();
 			}
-			else if (l > 0) {
+			else if (l > 0 && fx) {
 				lineClearAudio.play();
 			}
 		}
@@ -59,7 +59,7 @@ class Block {
 		 */
 		this.checkLeftRight = function(left) {
 			let a = copyArr(currentBlock.coords[1]).sort();
-			if ((a[a.length-1]>269 && !left)|| (a[0] < 1 && left)) {
+			if ((a[a.length-1]>right && !left)|| (a[0] < 1 && left)) {
 				return true;
 			}
 			let end = false;
@@ -102,9 +102,9 @@ class Block {
 
 		this.checkRotation = function(arr) {
 			for (let i in arr[0]) {
-				if (arr[0][i] > 570 || arr[0][i] < 0) return false;
+				if (arr[0][i] > bottom || arr[0][i] < 0) return false;
 				for (let j in arr[1]) {
-					if (i == 0 && (arr[1][j] > 271 || arr[1][j] < 0)) return false;
+					if (i == 0 && (arr[1][j] > right+2 || arr[1][j] < 0)) return false;
 					if (placedBlocks.coords[0].includes(arr[0][i]) && placedBlocks.coords[1].includes(arr[1][j])) {
 						return false;
 					}
@@ -120,7 +120,7 @@ class Block {
 		this.checkStop = function() {
 			let end = false;
 			let yValsTried = [];
-			if (this.coords[0][this.coords[0].length-1] >= 570) {
+			if (this.coords[0][this.coords[0].length-1] >= bottom) {
 				return true;
 			}
 			//Iterate through all individual blocks in the current piece sorted by y position
@@ -498,6 +498,8 @@ var score = 0;
 //var level = 1;
 var speed = 500;
 var linesCleared = 0;
+var bottom = 570;
+var right = 269;
 var gameOver = false;
 //True if a block has already been moved in the current frame
 var move = true;
@@ -626,15 +628,17 @@ const startInterval = function() {
 					var loseAudio = document.getElementById("loseAudio");
 					themeAudio.pause();
 					themeAudio.currentTime = 0;
-					loseAudio.play();
-					loseAudio.addEventListener("ended", e => {
-						var endResultsAudio = document.getElementById("endResultsAudio");
-						endResultsAudio.play();
-						endResultsAudio.addEventListener("ended", function() {
-							this.currentTime = 0;
-							this.play();
-						}, false);
-					})
+					if (music) {
+						loseAudio.play();
+						loseAudio.addEventListener("ended", e => {
+							var endResultsAudio = document.getElementById("endResultsAudio");
+							endResultsAudio.play();
+							endResultsAudio.addEventListener("ended", function() {
+								this.currentTime = 0;
+								this.play();
+							}, false);
+						})
+					}
 					currentBlock.destroy();
 					let j = 0;
 					let clearScreen = window.setInterval(() => {
@@ -664,7 +668,7 @@ const background = function() {
 	let img = new Image();
 	img.src = 'grid.png';
 	img.onload = () => {
-	  ctx.drawImage(img,0,0,300,600);
+	  ctx.drawImage(img,0,0,1200,2400);
 	}
 }
 
@@ -721,6 +725,12 @@ const copyArr = function(arr) {
 //INITIALIZE GAME
 $('#startGame').on('click', () => {
 	level = $('#levelSelect').val();
+	height = $('#heightIn').val(); 
+	width = $('#widthIn').val();
+	bottom -= (600-height);
+	right -= (300-width);
+	document.getElementById("game").height = height;
+	document.getElementById("game").width = width;
 	for (let i = 1; i < level; i++) {
 		speed -= 20;
 	}
@@ -736,6 +746,14 @@ $('#startGame').on('click', () => {
 		}
 		$('#settings').hide();
 		$('#gameStuff').show();
+		let themeAudio = document.getElementById('themeAudio');
+		if (music) {
+			themeAudio.play();
+			themeAudio.addEventListener("ended", e => {
+				this.currentTime = 0;
+				this.play();
+			})
+		}
 		group = newGroup();
 		currentBlock = group[groupIndex];
 		setImage();
@@ -746,24 +764,26 @@ $('#startGame').on('click', () => {
 
 //EVENT HANDLERS
 document.body.addEventListener("keydown", e => {
-	if (e.key == "ArrowRight") {
+	if (e.key == mapsArr[2]) {
 		currentBlock.move(30,0,false);
 	}
-	if (e.key == "ArrowLeft") {
+	if (e.key == mapsArr[1]) {
 		currentBlock.move(-30,0,false);
 	}
-	if (e.key == "ArrowDown") {
+	if (e.key == mapsArr[3]) {
 		score += 1;
 		currentBlock.move(0,30,false);
 	}
-	if (e.key == "ArrowUp") {
+	if (e.key == mapsArr[0]) {
 		currentBlock.rotate();
 	}
-	if (e.key == " ") { 
+	if (e.key == mapsArr[4]) { 
 		currentBlock.canRotate = false;
-		dropAudio.play();
+		if (fx) {
+			dropAudio.play();
+		}
 		let toScore = 0;
-		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < 570) {
+		while (currentBlock.coords[0][currentBlock.coords[0].length-1] < bottom) {
 			if (! currentBlock.checkStop()) {
 				toScore += 2;
 				for (let i = 0; i < currentBlock.coords[0].length; i++) {

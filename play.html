@@ -27,14 +27,19 @@
 		</style>
 	</head>
 	<body>
+        <h3 align="center"><a href="index.html">Home</a></h3>
         <div id="settings">
             <h1 align="center">Settings</h1>
             <h2 align="center">Board Customization:</h2>
             <h3 align="center">
-                <select>
+                <select id="customSelect">
                     <option value="default">Default</option>
                     <option value="custom">Custom:</option>
                 </select>
+                <div id="customSize">
+                    Height: <input type="number" id="heightIn" step="30" value="600">
+                    Width: <input type="number" id="widthIn" step="30" value="300">
+                </div>
             </h3>
             <div id="boardOptions" style="display:none">
             
