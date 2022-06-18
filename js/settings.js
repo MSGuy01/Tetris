@@ -35,7 +35,7 @@ window.onload = () => {
     for (let i = 0; i < maps.length; i++) {
         maps[i].addEventListener("click", e => {
             document.getElementById(e.target.id).innerHTML = 'Awaiting Input...';
-            canMap = parseInt(e.target.id.substr(1,1));
+            canMap = parseInt(e.target.id.substr(1,1))+1;
             window.setTimeout(() => {
                 canMap = false;
                 if (mapsArr[e.target.id.substr(1,1)] != ' ') {
@@ -46,6 +46,18 @@ window.onload = () => {
                 }
             }, 5000);
         });
+        maps[i].addEventListener("keydown", e => {
+            e.preventDefault();
+            if (canMap != false) {
+                mapsArr[canMap-1] = e.key;
+                if (e.key != ' ') {
+                    document.getElementById('m'+(canMap-1)).innerHTML = e.key;
+                }
+                else {
+                    document.getElementById('m'+(canMap-1)).innerHTML = '[SPACEBAR]';
+                }
+            }
+        })
     }
     $('#customSelect').on('click',() => {
         let val = document.getElementById("customSelect").value;
@@ -88,18 +100,6 @@ window.onload = () => {
                 alert('That is not a valid code. Please enter a valid code or generate a new one.');
             }
         });
-    })
-    document.body.addEventListener("keydown", e => {
-        e.preventDefault();
-        if (canMap == 0 || canMap != false) {
-            mapsArr[canMap] = e.key;
-            if (e.key != ' ') {
-                document.getElementById('m'+canMap).innerHTML = e.key;
-            }
-            else {
-                document.getElementById('m'+canMap).innerHTML = '[SPACEBAR]';
-            }
-        }
     })
     for (let i = 1; i < 26; i++) {
         let n = document.createElement("option")
