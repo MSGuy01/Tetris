@@ -181,7 +181,7 @@ $('#saveBlock').on('click', e => {
             let newBlockId = Math.floor(Math.random() * 899999 + 100000);
             if (!data[localStorage.getItem('userCode')]) {
                 let newObj = {
-                    "colors": [fillStyle.toString().substring(1,fillStyle.length)],
+                    "colors": [fillStyle.toString().substring(0,fillStyle.length)],
                     "blockIDs": [String(newBlockId)],
                     "blocks": [rotationsArr]
                 }
@@ -192,7 +192,7 @@ $('#saveBlock').on('click', e => {
                     //alert(fillStyle.toString().substring(1,fillStyle.length));
                     data[localStorage.getItem('userCode')].blocks.push(rotationsArr);
                     data[localStorage.getItem('userCode')].blockIDs.push(String(newBlockId));
-                    data[localStorage.getItem('userCode')].colors.push(fillStyle.toString().substring(1,fillStyle.length));
+                    data[localStorage.getItem('userCode')].colors.push(fillStyle.toString().substring(0,fillStyle.length));
                 }
                 else {
                     let index = data[localStorage.getItem('userCode')].blockIDs.indexOf(localStorage.getItem('blockID'));

@@ -569,6 +569,7 @@ const newGroup = function() {
 			}
 		}
 		used.push(choice);
+		console.log(choice);
 		switch (choice) {
 			case 0:
 				arr.push(new IBlock(0,90));
@@ -592,7 +593,7 @@ const newGroup = function() {
 				arr.push(new ZBlock(0,90));
 				break;
 			default:
-				arr.push(new CustomBlock(0,0,allData[choice-7]),dataa[choice-7]);
+				arr.push(new CustomBlock(0,0,allData[choice-7],dataa[choice-7]));
 				break;
 		}
 	}
@@ -618,6 +619,8 @@ const startInterval = function() {
 				group = newGroup();
 			}
 			if (!gameOver) {
+				console.log("****")
+				console.log(group);
 				currentBlock = group[groupIndex];
 			}
 			//Check whether the game is over
@@ -768,6 +771,7 @@ $('#startGame').on('click', () => {
 
 //EVENT HANDLERS
 document.body.addEventListener("keydown", e => {
+	e.preventDefault();
 	if (e.key == mapsArr[2]) {
 		currentBlock.move(30,0,false);
 	}
